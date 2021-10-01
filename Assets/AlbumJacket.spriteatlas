@@ -359,6 +359,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 36cfca6b2955ef447a2b3791a9617bd4, type: 3}
   - {fileID: 21300000, guid: e8be447bcf733234ea539b136b043829, type: 3}
   - {fileID: 21300000, guid: 8511d47b99c65cc4da10b0b97c28ec40, type: 3}
+  - {fileID: 21300000, guid: 1949797ba55740d4fb4e932e213474b3, type: 3}
   - {fileID: 21300000, guid: 42f25b7bc049beb419d76a0ed0feab13, type: 3}
   - {fileID: 21300000, guid: 43737d7bf29ce9b43a100b7d8d597251, type: 3}
   - {fileID: 21300000, guid: 2b07438bedce55e49980f44b1918891d, type: 3}
@@ -780,6 +781,7 @@ SpriteAtlas:
   - Urban Night (Electronic Boutique)
   - Child of Night
   - ANiMA
+  - "You \uFF06 Me"
   - "NB Ranger \uFF1A Nonstop Remix"
   - Phantom Of Sky
   - Streetlight

@@ -28,8 +28,7 @@ public class JsonParser : MonoBehaviour
     [Space]
     [SerializeField] private Transform DiffParent;
     [SerializeField] private Transform LvParent;
-    [SerializeField] private Transform DLCParent1;
-    [SerializeField] private Transform DLCParent2;
+    [SerializeField] private Transform[] DLCParents;
     [SerializeField] private Text CountLabel;
 
     private bool    _4b = true, _5b = true, _6b = true, _8b = true,
@@ -81,24 +80,16 @@ public class JsonParser : MonoBehaviour
         }
     }
     public void _DLC_ALL() {
-        foreach(Transform t in DLCParent1) {
-            Toggle tg = t.GetComponent<Toggle>();
-            if(tg != null)
-                tg.isOn = true;
-        }
-        foreach(Transform t in DLCParent2) {
+        foreach(Transform tp in DLCParents)
+        foreach(Transform t in tp) {
             Toggle tg = t.GetComponent<Toggle>();
             if(tg != null)
                 tg.isOn = true;
         }
     }
     public void _DLC_NONE() {
-        foreach(Transform t in DLCParent1) {
-            Toggle tg = t.GetComponent<Toggle>();
-            if(tg != null)
-                tg.isOn = false;
-        }
-        foreach(Transform t in DLCParent2) {
+        foreach(Transform tp in DLCParents)
+        foreach(Transform t in tp) {
             Toggle tg = t.GetComponent<Toggle>();
             if(tg != null)
                 tg.isOn = false;

@@ -41,6 +41,8 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 3873104a18d4af4469538cd1061661a6, type: 3}
     - {fileID: 102900000, guid: a6ce3c73688a11946bb2cebddb1c928a, type: 3}
     - {fileID: 102900000, guid: 2f2d6f4b7a7285c498dd6c331e94480f, type: 3}
+    - {fileID: 2800000, guid: f98e149814518ea498eae9254f054c67, type: 3}
+    - {fileID: 2800000, guid: bd807267201a2374a927f7a3f13d4a80, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -203,9 +205,11 @@ SpriteAtlas:
   - {fileID: -526910717, guid: 1c68ee5761668ca4cb95c12911e337e8, type: 3}
   - {fileID: 1294446955, guid: 1c68ee5761668ca4cb95c12911e337e8, type: 3}
   - {fileID: -21688200, guid: 1c68ee5761668ca4cb95c12911e337e8, type: 3}
+  - {fileID: 21300000, guid: bd807267201a2374a927f7a3f13d4a80, type: 3}
   - {fileID: 21300000, guid: 1609b267d708b8f43a511c9b2b0eb6f3, type: 3}
   - {fileID: 21300000, guid: 8d9f9677c1506934382b09eba51dc899, type: 3}
   - {fileID: 21300000, guid: 2362e098712a1c445b4c8af8943cbc0c, type: 3}
+  - {fileID: 21300000, guid: f98e149814518ea498eae9254f054c67, type: 3}
   - {fileID: -552750189, guid: e938a909870874840a65f9d1d3643d57, type: 3}
   - {fileID: -338877404, guid: 755e01399ccfe124a95be10b2a42e064, type: 3}
   - {fileID: -1430913908, guid: 755e01399ccfe124a95be10b2a42e064, type: 3}
@@ -565,9 +569,11 @@ SpriteAtlas:
   - LevelStarNM3_7
   - LevelStarNM3_4
   - LevelStarNM3_5
+  - GridIcon
   - 5BNM
   - ALL
   - 4BMX
+  - ListIcon
   - start_button_0
   - CE_8
   - CE_9
@@ -770,5 +776,5 @@ SpriteAtlas:
   - P1
   - 8BSC
   m_RenderDataMap: {}
-  m_Tag: UI_Small 1
+  m_Tag: UI
   m_IsVariant: 0
