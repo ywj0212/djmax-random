@@ -132,7 +132,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 400
+        y: 0
         width: 150
         height: 40
       alignment: 0
@@ -152,8 +152,8 @@ TextureImporter:
       name: VE_1
       rect:
         serializedVersion: 2
-        x: 0
-        y: 360
+        x: 150
+        y: 0
         width: 150
         height: 40
       alignment: 0
@@ -169,195 +169,6 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: VE_2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 320
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6b376b21571af164089f4ed19b0a5cb1
-      internalID: 1483160250
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_3
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 280
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 89631f70d6d1b524f846c941e386a407
-      internalID: 584364664
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_4
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 240
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dba95ca24a022db4c8f5e38d8655b96c
-      internalID: 1088733049
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_5
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 200
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a3b60571f23d5214b90ccd82eaf9c445
-      internalID: 387267092
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_6
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 160
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8a8c27a7fc5e8e148ad0ad0595aa0422
-      internalID: 1148436942
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_7
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 120
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4ddb79e680ebb064bbc45b6ae185ed2e
-      internalID: 2000622885
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_8
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 80
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1e326ef5e1b853448a6c6e71369a8be4
-      internalID: -1195705456
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_9
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 40
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4800a904c0ad50545a6d4c16f43822df
-      internalID: 1343328790
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: VE_10
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 150
-        height: 40
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 82494086ce4b39241a03d2b8d27c0270
-      internalID: -906513892
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -369,17 +180,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      VE_3: 584364664
-      VE_8: -1195705456
       VE_1: 1909353884
-      VE_6: 1148436942
-      VE_4: 1088733049
-      VE_7: 2000622885
       VE_0: -557212362
-      VE_2: 1483160250
-      VE_9: 1343328790
-      VE_5: 387267092
-      VE_10: -906513892
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
