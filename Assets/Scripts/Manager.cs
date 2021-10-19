@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using TMPro;
 
 [System.Serializable] public class TrackAdvancedData {
     public List<TrackAdvanced> tracks;
@@ -171,6 +172,7 @@ public class Manager : MonoBehaviour
     // ! 모드 전환을 설명하지 않아도 알 수 있도록 하면 좋겠는데 모르겠음
     // * <summary> 계열 주석 추가해야하는데 시험 끝나면 일괄적으로 한번에 작성시작해보자, 리팩토링도!
     // ? 키보드 입력 추가, delegate 등 이용해서 키보드 이벤트 처리하면 좋을 듯!
+    // TODO 모든 Legacy Text를 TMP Text로 바꿔야 함. ㅈ됌. 한글 언제 구움?
     Coroutine LoadingAchievement;
     public void OpenAchievement(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
@@ -327,7 +329,7 @@ public class Manager : MonoBehaviour
         
     }
     private void CustomLadderBanPick() {
-        
+
     }
 
     private string GetCategoryFullName(string abbr) {
