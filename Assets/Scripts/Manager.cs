@@ -62,7 +62,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private TextAsset advancedJson;
     [SerializeField] private TextAsset simpleJson;
     [SerializeField] private TextAsset defaultAchievementJson;
-    [SerializeField] private float      ToggleAllNoneDelay;
+    [SerializeField] private float     ToggleAllNoneDelay;
 
     [Header("Resources Path")]
     [SerializeField] private string ThumbnailResourcePath;
@@ -72,9 +72,21 @@ public class Manager : MonoBehaviour
     [SerializeField] private string AchievementDifficultyResourcePath;
 
     [Header("Header")]
-    [SerializeField] private Text TitleText;
+    [SerializeField] private TextMeshProUGUI TitleText;
+    [SerializeField] private Animator TitleStarShine;
 
     [Header("Body")]
+    [SerializeField] private CanvasScaler  MainCanvasScaler;
+    [SerializeField] private RectTransform BodyRect;
+    [Space]
+    [SerializeField] private RectTransform SelectorOptionPanel;
+    [SerializeField] private RectTransform RandomResultPanel;
+    [SerializeField] private RectTransform CustomLadderReadyPanel;
+    [SerializeField] private RectTransform CustomLadderBanPickPanel;
+    [SerializeField] private RectTransform CustomLadderMainPanel;
+    [SerializeField] private RectTransform AchievementInfoPanel;
+    [SerializeField] private RectTransform AchievementResultPanel;
+    [Space]
     [SerializeField] private RandomSelectorUIElements    RandomSelectorUI;
     [SerializeField] private AchievementUIElements       AchievementUI;
     [SerializeField] private CustomLadderMatchUIElements CustomLadderUI;
@@ -86,9 +98,10 @@ public class Manager : MonoBehaviour
         public Image            SingleThumbnail;
         public Image            SingleCategory;
         public Image            SingleButtonAndDiff;
-        public Text             SingleTitle;
-        public Text             SingleComposer;
+        public TextMeshProUGUI  SingleTitle;
+        public TextMeshProUGUI  SingleComposer;
         public Transform        SingleLvParent;
+        public Transform        SingleLvSCParent;
         [Space]
         public Transform        ResultListParent;
         public GameObject       ResultListPrefab;
@@ -96,7 +109,7 @@ public class Manager : MonoBehaviour
         public Transform        DifficultyParent;
         public Transform        LvParent;
         public Transform[]      DLCParents;
-        public Text             CountLabel;
+        public TextMeshProUGUI  CountLabel;
     }
     [System.Serializable] public class AchievementUIElements {
         public Sprite[]         ButtonBackgroundSprites;
@@ -106,8 +119,8 @@ public class Manager : MonoBehaviour
         public Image            ButtonOptText;
         public Animator         StarShineAnimator;
         [Space]
-        public Text             Title;
-        public Text             Composer;
+        public TextMeshProUGUI  Title;
+        public TextMeshProUGUI  Composer;
         public Image            Category;
         public Image            Preview;
         public Color[]          IndicatorColor;
@@ -166,17 +179,34 @@ public class Manager : MonoBehaviour
         customAchievementList  = LoadJson<AchievementList>(CustomAchievementListPath) ?? JsonUtility.FromJson<AchievementList>(defaultAchievementJson.text);
 
         // * TEST CODES
-        OpenAchievement();
+        ClearPanel();
+        OpenAchievement(true);
     }
 
-    // ! 모드 전환을 설명하지 않아도 알 수 있도록 하면 좋겠는데 모르겠음
-    // * <summary> 계열 주석 추가해야하는데 시험 끝나면 일괄적으로 한번에 작성시작해보자, 리팩토링도!
-    // ? 키보드 입력 추가, delegate 등 이용해서 키보드 이벤트 처리하면 좋을 듯!
-    // TODO 모든 Legacy Text를 TMP Text로 바꿔야 함. ㅈ됌. 한글 언제 구움?
+
+    // TODO : 키보드 입력 추가
+    // ! 반응형 해상도 맞춰서 슬라이딩 모션 넣는거 문제 발생.... 해결하기 매우 어려울 것으로 예상 됨...
+    // private void Update() {}
+
+    private void ClearPanel() {
+        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).SetEase(Ease.InOutCirc);
+        RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0f).SetEase(Ease.InOutCirc);
+        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0f).SetEase(Ease.InOutCirc);
+        // CustomLadderBanPickPanel.DOMoveX(-CustomLadderBanPickPanel, 0.5f).SetEase(Ease.InOutCirc);
+        // CustomLadderMainPanel.DOMoveX(-CustomLadderMainPanel, 0.5f).SetEase(Ease.InOutCirc);
+        AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0f).SetEase(Ease.InOutCirc);
+        AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0f).SetEase(Ease.InOutCirc);
+    }
     Coroutine LoadingAchievement;
     public void OpenAchievement(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            
+            SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).SetEase(Ease.InOutCirc);
+            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc);
+            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderBanPickPanel.DOMoveX(-CustomLadderBanPickPanel, 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderMainPanel.DOMoveX(-CustomLadderMainPanel, 0.5f).SetEase(Ease.InOutCirc);
+            AchievementInfoPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
+            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
         }
         
         if(LoadingAchievement != null)
@@ -210,7 +240,7 @@ public class Manager : MonoBehaviour
                     GameObject LevelDiv = Instantiate(AchievementUI.LevelDivPrefab, Vector3.zero, Quaternion.identity, AchievementUI.ScrollViewport);
                     LevelDiv.transform.localScale = Vector3.one;
 
-                    LevelDiv.transform.GetChild(0).GetComponent<Text>().text = $"Lv {i+1}";
+                    LevelDiv.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Lv {i+1}";
                     Transform LevelStarToggleParent = LevelDiv.transform.GetChild(2);
                     for(int j = 0; j < i+1; j++) {
                         LevelStarToggleParent.GetChild(j).GetComponent<Toggle>().isOn = true;
@@ -222,7 +252,7 @@ public class Manager : MonoBehaviour
                         GameObject Floor = Instantiate(AchievementUI.FloorListPrefab, Vector3.zero, Quaternion.identity, AchievementUI.ScrollViewport);
                         Floor.transform.localScale = Vector3.one;
 
-                        Text FloorHeader = Floor.transform.GetChild(0).GetChild(0).GetComponent<Text>();
+                        TextMeshProUGUI FloorHeader = Floor.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
                         FloorHeader.text = $"Floor {j+1}";
 
                         Transform TrackList = Floor.transform.GetChild(1);
@@ -237,8 +267,8 @@ public class Manager : MonoBehaviour
                             Image Difficulty = Track.transform.GetChild(0).GetChild(0).GetComponent<Image>();
                             Image Indicator = Track.transform.GetChild(1).GetComponent<Image>();
                             Image Category = Track.transform.GetChild(2).GetChild(0).GetComponent<Image>();
-                            Text Title = Track.transform.GetChild(2).GetChild(1).GetComponent<Text>();
-                            Text Composer = Track.transform.GetChild(2).GetChild(2).GetComponent<Text>();
+                            TextMeshProUGUI Title = Track.transform.GetChild(2).GetChild(1).GetComponent<TextMeshProUGUI>();
+                            TextMeshProUGUI Composer = Track.transform.GetChild(2).GetChild(2).GetComponent<TextMeshProUGUI>();
 
                             Thumbnail.sprite = GetThumbnailSprite(TrackData.Name);
                             Difficulty.sprite = GetAchievementDifficultySprite(TrackData.Diff);
@@ -267,7 +297,7 @@ public class Manager : MonoBehaviour
                     GameObject LevelDiv = Instantiate(AchievementUI.LevelDivPrefab, Vector3.zero, Quaternion.identity, AchievementUI.ScrollViewport);
                     LevelDiv.transform.localScale = Vector3.one;
 
-                    LevelDiv.transform.GetChild(0).GetComponent<Text>().text = $"Lv {i+1}";
+                    LevelDiv.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = $"Lv {i+1}";
                     Transform LevelStarToggleParent = LevelDiv.transform.GetChild(2);
                     for(int j = 0; j < i+1; j++) {
                         LevelStarToggleParent.GetChild(j).GetComponent<Toggle>().isOn = true;
@@ -279,7 +309,7 @@ public class Manager : MonoBehaviour
                         GameObject Floor = Instantiate(AchievementUI.FloorGridPrefab, Vector3.zero, Quaternion.identity, AchievementUI.ScrollViewport);
                         Floor.transform.localScale = Vector3.one;
 
-                        Text FloorHeader = Floor.transform.GetChild(0).GetChild(0).GetComponent<Text>();
+                        TextMeshProUGUI FloorHeader = Floor.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>();
                         FloorHeader.text = $"Floor {j+1}";
 
                         Transform TrackGrid = Floor.transform.GetChild(1);
@@ -315,23 +345,48 @@ public class Manager : MonoBehaviour
     }
     public void OpenRandomSelector(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            
+            SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
+            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
+            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderBanPickPanel.DOMoveX(-CustomLadderBanPickPanel, 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderMainPanel.DOMoveX(-CustomLadderMainPanel, 0.5f).SetEase(Ease.InOutCirc);
+            AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc);
+            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc);
+
+            RandomSelectorUI.DefaultUIScreen.SetActive(true);
+            RandomSelectorUI.SingleUIScreen.SetActive(false);
+            foreach(Transform t in RandomSelectorUI.ResultListParent) {
+                Destroy(t.gameObject);
+            }   
         }
     }
     public void OpenCustomLadder(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            
+            SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
+            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc);
+            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderBanPickPanel.DOMoveX(-CustomLadderBanPickPanel, 0.5f).SetEase(Ease.InOutCirc);
+            // CustomLadderMainPanel.DOMoveX(-CustomLadderMainPanel, 0.5f).SetEase(Ease.InOutCirc);
+            AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc);
+            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc);
         }
-    }
 
-    
-    private void StartCustomLadderMatch() {
-        
+        CustomLadderState = LadderState.Ready;
     }
+    private enum LadderState { Ready, BanPick, Main }
+    private LadderState CustomLadderState = LadderState.Ready;
+    private List<TrackAdvanced> CustomLadderPickedTracks = new List<TrackAdvanced>();
     private void CustomLadderBanPick() {
-
+        CustomLadderState = LadderState.BanPick;
     }
-
+    // TODO : 여기가 커스텀 래더 매치 코드 개발 이어서 해야하는 부분!
+    public void CustomLadderBanPickCancel() {}
+    private void StartCustomLadderMatch() {
+        CustomLadderState = LadderState.Main;
+    }
+    public void CustomLadderNextRound() {}
+    public void CustomLadderMatchEnd() {}
+    
     private string GetCategoryFullName(string abbr) {
         switch(abbr) {
             case "P1": return "PORTABLE 1";
@@ -512,10 +567,33 @@ public class Manager : MonoBehaviour
         switch(AppState) {
             case State.Achievements: AppState = State.Random;       OpenRandomSelector(true); break;
             case State.Random:       AppState = State.Ladder;       OpenCustomLadder(true);   break;
-            case State.Ladder:       AppState = State.Achievements; OpenAchievement(true);    break;
+            case State.Ladder:       if(CustomLadderState != LadderState.Ready) return;
+                                     AppState = State.Achievements; OpenAchievement(true);    break;
         }
 
         TitleText.text = StateTitleString[(int)AppState];
+        TitleStarShine.SetTrigger("Shine");
+    }
+
+    private float GetRectTransformWidth(RectTransform rect) {
+        float wRatio = Screen.width  / MainCanvasScaler.referenceResolution.x;
+        float hRatio = Screen.height / MainCanvasScaler.referenceResolution.y;
+
+        float ratio =
+            wRatio * (1f - MainCanvasScaler.matchWidthOrHeight) +
+            hRatio * (MainCanvasScaler.matchWidthOrHeight);
+
+        return rect.rect.width * ratio;
+    }
+    private float GetRectTransformHeight(RectTransform rect) {
+        float wRatio = Screen.width  / MainCanvasScaler.referenceResolution.x;
+        float hRatio = Screen.height / MainCanvasScaler.referenceResolution.y;
+
+        float ratio =
+            wRatio * (1f - MainCanvasScaler.matchWidthOrHeight) +
+            hRatio * (MainCanvasScaler.matchWidthOrHeight);
+
+        return rect.rect.height * ratio;
     }
 
 #region JSON Save & Load
@@ -548,7 +626,7 @@ public class Manager : MonoBehaviour
     public void _StartBtn() {
         switch(AppState) {
             case State.Random: ShowRandomSelectorResult(); break;
-            case State.Ladder: StartCustomLadderMatch();   break;
+            case State.Ladder: CustomLadderBanPick();   break;
         }
     }
 
@@ -670,57 +748,57 @@ public class Manager : MonoBehaviour
             Destroy(t.gameObject);
         }
 
-        List<TrackAdvanced> tracks = GetTracks(count:_Count);
+        List<TrackAdvanced> Tracks = GetTracks(count:_Count);
         if(_Count > 1) {
             RandomSelectorUI.SingleUIScreen.SetActive(false);
-            foreach(TrackAdvanced t in tracks) {
-                GameObject temp = Instantiate(RandomSelectorUI.ResultListPrefab);
-                temp.transform.SetParent(RandomSelectorUI.ResultListParent);
-                temp.transform.localScale = Vector3.one;
+            foreach(TrackAdvanced TrackData in Tracks) {
+                GameObject ResultList = Instantiate(RandomSelectorUI.ResultListPrefab);
+                ResultList.transform.SetParent(RandomSelectorUI.ResultListParent);
+                ResultList.transform.localScale = Vector3.one;
                 
-                if(t == null)
+                if(TrackData == null)
                     continue;
 
                 // ? Track > Album Jacket(Image)
-                Sprite thumb = GetThumbnailSprite(t.Name);
+                Sprite thumb = GetThumbnailSprite(TrackData.Name);
                 if(thumb != null)
-                    temp.transform.GetChild(0).GetComponent<Image>().sprite = thumb;
+                    ResultList.transform.GetChild(0).GetComponent<Image>().sprite = thumb;
                 else
-                    print(t.Name + " " + t.Bt + " " + t.Diff);
+                    print(TrackData.Name + " " + TrackData.Bt + " " + TrackData.Diff);
 
                 // ? Track > Description > Difficulty(Image)
-                temp.transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = GetDifficultySprite(t.Bt, t.Diff);
+                ResultList.transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = GetDifficultySprite(TrackData.Bt, TrackData.Diff);
                 
                 // ? Track > Description > Category(Image)
-                temp.transform.GetChild(1).GetChild(1).GetComponent<Image>().sprite = GetCategorySprite(t.Ctgr);
+                ResultList.transform.GetChild(1).GetChild(1).GetComponent<Image>().sprite = GetCategorySprite(TrackData.Ctgr);
 
                 // ? Track > Description > Title(Text)
-                temp.transform.GetChild(1).GetChild(2).GetComponent<Text>().text = t.Name;
+                ResultList.transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>().text = TrackData.Name;
 
                 // ? Track > Description > Info(Text)
-                temp.transform.GetChild(1).GetChild(3).GetComponent<Text>().text = t.Cmps;
+                ResultList.transform.GetChild(1).GetChild(3).GetComponent<TextMeshProUGUI>().text = TrackData.Cmps;
 
-                if(t.Diff == "SC") {
+                if(TrackData.Diff == "SC") {
                     // ? Track > Description > LevelToggle SC
-                    Transform levelToggleParent = temp.transform.GetChild(1).GetChild(4);
-                    Transform levelToggleParentSC = temp.transform.GetChild(1).GetChild(5);
+                    Transform levelToggleParent = ResultList.transform.GetChild(1).GetChild(4);
+                    Transform levelToggleParentSC = ResultList.transform.GetChild(1).GetChild(5);
                     
                     levelToggleParent.gameObject.SetActive(false);
                     levelToggleParentSC.gameObject.SetActive(true);
 
-                    for(int i = 0; i < t.Lv; i++) {
+                    for(int i = 0; i < TrackData.Lv; i++) {
                         levelToggleParentSC.GetChild(i).GetComponent<Toggle>().isOn = true;
                     }
                 }
                 else {
                     // ? Track > Description > LevelToggle
-                    Transform levelToggleParent = temp.transform.GetChild(1).GetChild(4);
-                    Transform levelToggleParentSC = temp.transform.GetChild(1).GetChild(5);
+                    Transform levelToggleParent = ResultList.transform.GetChild(1).GetChild(4);
+                    Transform levelToggleParentSC = ResultList.transform.GetChild(1).GetChild(5);
 
                     levelToggleParent.gameObject.SetActive(true);
                     levelToggleParentSC.gameObject.SetActive(false);
 
-                    for(int i = 0; i < t.Lv; i++) {
+                    for(int i = 0; i < TrackData.Lv; i++) {
                         levelToggleParent.GetChild(i).GetComponent<Toggle>().isOn = true;
                     }
                 }         
@@ -728,6 +806,28 @@ public class Manager : MonoBehaviour
         }
         else {
             RandomSelectorUI.SingleUIScreen.SetActive(true);
+            TrackAdvanced TrackData = Tracks[0];
+
+            RandomSelectorUI.SingleCategory.sprite = GetCategorySprite(TrackData.Ctgr);
+            RandomSelectorUI.SingleThumbnail.sprite = GetThumbnailSprite(TrackData.Name);
+            RandomSelectorUI.SingleButtonAndDiff.sprite = GetDifficultySprite(TrackData.Bt, TrackData.Diff);
+            RandomSelectorUI.SingleTitle.text = TrackData.Name;
+            RandomSelectorUI.SingleComposer.text = TrackData.Cmps;
+
+            if(TrackData.Diff == "SC") {
+                RandomSelectorUI.SingleLvParent.gameObject.SetActive(false);
+                RandomSelectorUI.SingleLvSCParent.gameObject.SetActive(true);
+
+                for(int i = 0; i < 15; i++)           RandomSelectorUI.SingleLvSCParent.GetChild(i).GetComponent<Toggle>().isOn = false;
+                for(int i = 0; i < TrackData.Lv; i++) RandomSelectorUI.SingleLvSCParent.GetChild(i).GetComponent<Toggle>().isOn = true;
+            }
+            else {
+                RandomSelectorUI.SingleLvParent.gameObject.SetActive(true);
+                RandomSelectorUI.SingleLvSCParent.gameObject.SetActive(false);
+
+                for(int i = 0; i < 15; i++)           RandomSelectorUI.SingleLvParent.GetChild(i).GetComponent<Toggle>().isOn = false;
+                for(int i = 0; i < TrackData.Lv; i++) RandomSelectorUI.SingleLvParent.GetChild(i).GetComponent<Toggle>().isOn = true;
+            }
         }
     }
     private List<TrackAdvanced> GetTracks(int count = 1) {
