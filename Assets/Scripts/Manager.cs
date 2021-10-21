@@ -139,6 +139,7 @@ public class Manager : MonoBehaviour
         public GameObject       DefaultUIScreen;
         public Transform        ScrollViewport;
         [Space]
+        public GameObject       BanPickPrefab;
         public GameObject       RoundPrefab;
     }
 
@@ -185,7 +186,6 @@ public class Manager : MonoBehaviour
 
 
     // TODO : 키보드 입력 추가
-    // ! 반응형 해상도 맞춰서 슬라이딩 모션 넣는거 문제 발생.... 해결하기 매우 어려울 것으로 예상 됨...
     // private void Update() {}
 
     private void ClearPanel() {
@@ -376,11 +376,15 @@ public class Manager : MonoBehaviour
     private enum LadderState { Ready, BanPick, Main }
     private LadderState CustomLadderState = LadderState.Ready;
     private List<TrackAdvanced> CustomLadderPickedTracks = new List<TrackAdvanced>();
+    private List<int> CustomLadderBannedIndex = new List<int>();
     private void CustomLadderBanPick() {
         CustomLadderState = LadderState.BanPick;
     }
     // TODO : 여기가 커스텀 래더 매치 코드 개발 이어서 해야하는 부분!
     public void CustomLadderBanPickCancel() {}
+    public void CustomLadderBanPickEnable(int index) {}
+    public void CustomLadderBanPickDisable(int index) {}
+
     private void StartCustomLadderMatch() {
         CustomLadderState = LadderState.Main;
     }
@@ -578,21 +582,13 @@ public class Manager : MonoBehaviour
     private float GetRectTransformWidth(RectTransform rect) {
         float wRatio = Screen.width  / MainCanvasScaler.referenceResolution.x;
         float hRatio = Screen.height / MainCanvasScaler.referenceResolution.y;
-
-        float ratio =
-            wRatio * (1f - MainCanvasScaler.matchWidthOrHeight) +
-            hRatio * (MainCanvasScaler.matchWidthOrHeight);
-
+        float ratio = Mathf.Min(wRatio, hRatio);
         return rect.rect.width * ratio;
     }
     private float GetRectTransformHeight(RectTransform rect) {
         float wRatio = Screen.width  / MainCanvasScaler.referenceResolution.x;
         float hRatio = Screen.height / MainCanvasScaler.referenceResolution.y;
-
-        float ratio =
-            wRatio * (1f - MainCanvasScaler.matchWidthOrHeight) +
-            hRatio * (MainCanvasScaler.matchWidthOrHeight);
-
+        float ratio = Mathf.Min(wRatio, hRatio);
         return rect.rect.height * ratio;
     }
 
