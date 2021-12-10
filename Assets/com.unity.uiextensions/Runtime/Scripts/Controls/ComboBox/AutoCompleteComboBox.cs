@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 
 namespace UnityEngine.UI.Extensions
 {
@@ -310,7 +311,7 @@ namespace UnityEngine.UI.Extensions
                 if (i < AvailableOptions.Count)
                 {
                     itemObjs[i].name = "Item " + i + " " + _panelItems[i];
-                    itemObjs[i].transform.Find("Text").GetComponent<Text>().text = AvailableOptions[i]; //set the text value
+                    itemObjs[i].transform.Find("Text").GetComponent<TextMeshProUGUI>().text = AvailableOptions[i]; //set the text value
 
                     Button itemBtn = itemObjs[i].GetComponent<Button>();
                     itemBtn.onClick.RemoveAllListeners();
