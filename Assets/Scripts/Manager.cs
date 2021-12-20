@@ -1,25 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 using System;
 using System.Linq;
 using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 using DG.Tweening;
 using TMPro;
+using Mirix.DMRV;
 
 public class Manager : Singleton<Manager>
 {
 #region 인스펙터 입력 변수들
-    [SerializeField] private float ToggleAllNoneDelay;
+    [SerializeField] public float ToggleAllNoneDelay;
 
     [Header("Header")]
     [SerializeField] private TextMeshProUGUI TitleText;
     [SerializeField] private Animator TitleStarShine;
+    [SerializeField] private TextMeshProUGUI VersionText;
+
+    [Header("Modals")]
+    [SerializeField] private GameObject ModalBackdrop;
+    [SerializeField] private GameObject ModalInitFail;
+    [SerializeField] private TextMeshProUGUI InitFailErrorCode;
 
     [Header("Body")]
-    // [SerializeField] private Canvas Canvas;
+    [SerializeField] private Image         _BG;
+    [SerializeField] private Image         _BGPrev;
     [SerializeField] private RectTransform CanvasRect;
     [SerializeField] private CanvasScaler  MainCanvasScaler;
     [SerializeField] private RectTransform BodyRect;
@@ -39,6 +49,10 @@ public class Manager : Singleton<Manager>
     [Serializable] public class RandomSelectorUIElements {
         public GameObject       DefaultUIScreen;
         public GameObject       SingleUIScreen;
+        public GameObject       NoneUIScreen;
+        [Space]
+        public GameObject       DLCSelectorPrefab;
+        public Transform        DLCSelectorParent;
         [Space]
         public Image            SingleThumbnail;
         public Image            SingleCategory;
@@ -51,34 +65,36 @@ public class Manager : Singleton<Manager>
         public Transform        ResultListParent;
         public GameObject       ResultListPrefab;
         [Space]
-        public Toggle[]         DifficultyParent;
+        public List<Toggle>     DifficultyParent;
         public LvToggleParent   LvParent;
-        public Toggle[]         DLCs;
+        public List<Toggle>     DLCs;
         public TextMeshProUGUI  CountLabel;
     }
     [Serializable] public class AchievementUIElements {
-        public Sprite[]         ButtonBackgroundSprites;
-        public Sprite[]         ButtonTextSprites;
+        public Sprite[]          ButtonBackgroundSprites;
+        public Sprite[]          ButtonTextSprites;
         [Space]
-        public Image            ButtonOptBG;
-        public Image            ButtonOptText;
-        public Animator         StarShineAnimator;
+        public Image             ButtonOptBG;
+        public Image             ButtonOptText;
+        public Animator          StarShineAnimator;
         [Space]
-        public TextMeshProUGUI  Title;
-        public TextMeshProUGUI  Composer;
-        public Image            Category;
-        public Image            Preview;
-        public Color[]          IndicatorColor;
-        public LvToggleParent   LvToggleParent;
-        public LvToggleParent   LvToggleSCParent;
-        public ToggleGroup      StateToggleGroup;
+        public TextMeshProUGUI   Title;
+        public TextMeshProUGUI   Composer;
+        public Image             Category;
+        public Image             Preview;
+        public TMP_InputField    RateField;
+        public Color[]           IndicatorColor;
+        public ButtonAnimation[] Difficulty;
+        public LvToggleParent    LvToggleParent;
+        public LvToggleParent    LvToggleSCParent;
+        public ToggleGroup       StateToggleGroup;
         [Space]
-        public Transform        ScrollViewport;
-        public GameObject       LevelDivPrefab;
-        public GameObject       FloorListPrefab;
-        public GameObject       FloorGridPrefab;
-        public GameObject       ListPrefab;
-        public GameObject       GridPrefab;
+        public Transform         ScrollViewport;
+        public GameObject        LevelDivPrefab;
+        public GameObject        FloorListPrefab;
+        public GameObject        FloorGridPrefab;
+        public GameObject        ListPrefab;
+        public GameObject        GridPrefab;
     }
     [Serializable] public class CustomLadderMatchUIElements {
         public Transform        BanPickScrollViewport;
@@ -105,6 +121,8 @@ public class Manager : Singleton<Manager>
     public static Board.Button BoardButton      = Board.Button._4B;
 
     public static WaitForSeconds              ToggleDelay;
+    public static Image                       BG                => inst._BG;
+    public static Image                       BGPrev            => inst._BGPrev;
     public static RandomSelectorUIElements    RandomSelectorUI  => inst._RandomSelectorUI;
     public static AchievementUIElements       AchievementUI     => inst._AchievementUI;
     public static CustomLadderMatchUIElements CustomLadderUI    => inst._CustomLadderUI;
@@ -113,14 +131,95 @@ public class Manager : Singleton<Manager>
     private CustomLadderMatch CustomLadderMatch;
     private RandomSelector RandomSelector;
     private void Start() {
+        DOTween.SetTweensCapacity(600, 100);
         ToggleDelay = new WaitForSeconds(ToggleAllNoneDelay);
 
         BoardManager = GetComponent<BoardManager>();
         CustomLadderMatch = GetComponent<CustomLadderMatch>();
         RandomSelector = GetComponent<RandomSelector>();
 
+        StartCoroutine(Init());
+    }
+
+    public void InitFailAccept() {
+        Application.Quit();
+    }
+    private IEnumerator Init() {
         ClearPanel();
+
+        UnityWebRequest webReq = UnityWebRequest.Get("https://req.mirix.kr/dmrv-random/main.bin");
+        yield return webReq.SendWebRequest();
+
+        if(webReq.result == UnityWebRequest.Result.ConnectionError || webReq.result == UnityWebRequest.Result.ProtocolError) {
+            InitFailErrorCode.text += webReq.error;
+            ModalBackdrop.SetActive(true);
+            ModalInitFail.SetActive(true);
+
+            yield break;
+        }
+
+        MemoryStream ms = new MemoryStream(webReq.downloadHandler.data);
+        BinaryFormatter bin = new BinaryFormatter();
+
+        SystemFileIO.MainData = (MainData)bin.Deserialize(ms);
+        SystemFileIO.LoadData();
+        SystemFileIO.GetLoadingSprite(BG);
+        BGPrev.sprite = BG.sprite;
+        VersionText.text = SystemFileIO.MainData.Version;
+
+        RandomSelector.DLCs.AddRange(SystemFileIO.MainData.DLCList);
+        BoardManager.DLCs.AddRange(SystemFileIO.MainData.DLCList);
+
+        foreach (string dlc in SystemFileIO.MainData.DLCList)
+        {
+            GameObject selector = Instantiate(RandomSelectorUI.DLCSelectorPrefab, RandomSelectorUI.DLCSelectorParent);
+            selector.transform.localScale = Vector3.one;
+
+            GameObject board = Instantiate(RandomSelectorUI.DLCSelectorPrefab, BoardManager.DLCToggleParent);
+            board.transform.localScale = Vector3.one;
+            
+            DLC_Selector sel = selector.GetComponent<DLC_Selector>();
+            sel.Toggle.onValueChanged.AddListener((state) => RandomSelector.DLC(state, dlc));
+            DLC_Selector bd = board.GetComponent<DLC_Selector>();
+            bd.Toggle.onValueChanged.AddListener((state) => BoardManager.DLC(state, dlc));
+
+            RandomSelectorUI.DLCs.Add(sel.Toggle);
+            BoardManager.DLCToggles.Add(bd.Toggle);
+            
+            {
+                webReq = UnityWebRequestTexture.GetTexture($"https://req.mirix.kr/dmrv-random/dlc/{dlc}_on.png");
+                yield return webReq.SendWebRequest();
+
+                if(webReq.result == UnityWebRequest.Result.ConnectionError || webReq.result == UnityWebRequest.Result.ProtocolError) {
+                    print(webReq.error);
+                }
+                else {
+                    Texture2D texture = ((DownloadHandlerTexture)webReq.downloadHandler).texture;
+
+                    Rect rect = new Rect(0, 0, texture.width, texture.height);
+                    sel.On.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+                    bd.On.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+                }
+            }
+            {
+                webReq = UnityWebRequestTexture.GetTexture($"https://req.mirix.kr/dmrv-random/dlc/{dlc}_off.png");
+                yield return webReq.SendWebRequest();
+
+                if(webReq.result == UnityWebRequest.Result.ConnectionError || webReq.result == UnityWebRequest.Result.ProtocolError) {
+                    print(webReq.error);
+                }
+                else {
+                    Texture2D texture = ((DownloadHandlerTexture)webReq.downloadHandler).texture;
+
+                    Rect rect = new Rect(0, 0, texture.width, texture.height);
+                    sel.Off.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+                    bd.Off.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+                }
+            }
+        }
+
         OpenAchievement(true);
+
     }
 
     // ! public void SetSiblingIndex(int index); 이용하여 자식 객체 순서 변경 가능
@@ -238,6 +337,9 @@ public class Manager : Singleton<Manager>
                 Destroy(t.gameObject);
             }   
         }
+        
+        SystemFileIO.GetLoadingSprite(BG);
+        BGPrev.sprite = BG.sprite;
     }
     public void _OpenCustomLadder(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
@@ -250,6 +352,8 @@ public class Manager : Singleton<Manager>
             AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc);
         }
 
+        SystemFileIO.GetLoadingSprite(BG);
+        BGPrev.sprite = BG.sprite;
         CustomLadderMatch.CustomLadderState = CustomLadderMatch.LadderState.Ready;
     }
     

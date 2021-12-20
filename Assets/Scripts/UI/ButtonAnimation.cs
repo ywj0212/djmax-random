@@ -17,6 +17,9 @@ public class ButtonAnimation : MonoBehaviour
         maskRect = (RectTransform)transform.GetChild(0).GetChild(0);
         onRect = (RectTransform)transform.GetChild(0).GetChild(0).GetChild(0);
 
+        if(maskRect == null || onRect == null)
+            Debug.LogException(new MissingReferenceException());
+
         moveVector = new Vector2(-moveAmount, moveAmount);
         innerVector = new Vector2(moveAmount * Mathf.Sqrt(2), 0);
 

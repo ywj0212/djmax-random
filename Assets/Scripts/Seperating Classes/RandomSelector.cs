@@ -7,22 +7,17 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Mirix.DMRV;
 
 public class RandomSelector : MonoBehaviour
 {
     private static bool    _4b = true, _5b = true, _6b = true, _8b = true,
                            _nm = true, _hd = true, _mx = true, _sc = true,
-                           _1 = true, _2 = true, _3 = true, _4 = true, _5 = true, 
-                           _6 = true, _7 = true, _8 = true, _9 = true, _10 = true, 
+                           _1 = true, _2 = true, _3 = true, _4 = true, _5 = true,
+                           _6 = true, _7 = true, _8 = true, _9 = true, _10 = true,
                            _11 = true, _12 = true, _13 = true, _14 = true, _15 = true;
     
-    private static bool    _RE = true, _P1 = true, _P2 = true, _P3 = true,
-                           _T1 = true, _T2 = true, _T3 = true,
-                           _BS = true, _CE = true, _TR = true,
-                           _VE = true, _ES = true, _CH = true, _GC = true,
-                           _DM = true, _CY = true, _EM = true,
-                           _GF = true, _GG = true, _NX = true;
-    
+    public static List<string> DLCs = new List<string>();
     private static int _Count = 1;
 
     public void ShowRandomSelectorResult() {
@@ -31,23 +26,24 @@ public class RandomSelector : MonoBehaviour
             Destroy(t.gameObject);
         }
 
-        List<TrackAdvanced> Tracks = GetTracks(count:_Count);
-        if(_Count > 1) {
+        List<MainData.TrackInfo> Tracks = GetTracks(count:_Count);
+        if(Tracks.Count > 1) {
             Manager.RandomSelectorUI.SingleUIScreen.SetActive(false);
-            foreach(TrackAdvanced TrackData in Tracks) {
+            Manager.RandomSelectorUI.NoneUIScreen.SetActive(false);
+
+            foreach(MainData.TrackInfo TrackData in Tracks) {
                 GameObject ResultList = Instantiate(Manager.RandomSelectorUI.ResultListPrefab);
                 ResultList.transform.SetParent(Manager.RandomSelectorUI.ResultListParent);
                 ResultList.transform.localScale = Vector3.one;
-                
-                if(TrackData == null)
-                    continue;
 
                 R_SelectedTrack RST = ResultList.GetComponent<R_SelectedTrack>();
-                RST.Thumbnail.sprite  = SystemFileIO.GetThumbnailSprite(TrackData.Name);
+                MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
+
+                SystemFileIO.GetThumbnailSprite(RST.Thumbnail, TrackData.SongIndex);
                 RST.Difficulty.sprite = SystemFileIO.GetDifficultySprite(TrackData.Bt, TrackData.Diff);
-                RST.Category.sprite   = SystemFileIO.GetCategorySprite(TrackData.Ctgr);
-                RST.Title.text        = TrackData.Name;
-                RST.Composer.text     = TrackData.Cmps;
+                SystemFileIO.GetCategorySprite(RST.Category, SongData.Ctgr);
+                RST.Title.text        = SongData.Name;
+                RST.Composer.text     = SongData.Cmps;
 
                 if(TrackData.Diff == "SC") {
                     RST.LvToggleParent.gameObject.SetActive(false);
@@ -63,17 +59,18 @@ public class RandomSelector : MonoBehaviour
                 }
             }
         }
-        else {
+        else if(Tracks.Count == 1) {
             Manager.RandomSelectorUI.SingleUIScreen.SetActive(true);
-            TrackAdvanced TrackData = Tracks[0];
+            Manager.RandomSelectorUI.NoneUIScreen.SetActive(false);
 
-            if(TrackData == null) return;
+            MainData.TrackInfo TrackData = Tracks[0];
+            MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
 
-            Manager.RandomSelectorUI.SingleCategory.sprite = SystemFileIO.GetCategorySprite(TrackData.Ctgr);
-            Manager.RandomSelectorUI.SingleThumbnail.sprite = SystemFileIO.GetThumbnailSprite(TrackData.Name);
+            SystemFileIO.GetCategorySprite(Manager.RandomSelectorUI.SingleCategory, SongData.Ctgr);
+            SystemFileIO.GetThumbnailSprite(Manager.RandomSelectorUI.SingleThumbnail, TrackData.SongIndex);
             Manager.RandomSelectorUI.SingleButtonAndDiff.sprite = SystemFileIO.GetDifficultySprite(TrackData.Bt, TrackData.Diff);
-            Manager.RandomSelectorUI.SingleTitle.text = TrackData.Name;
-            Manager.RandomSelectorUI.SingleComposer.text = TrackData.Cmps;
+            Manager.RandomSelectorUI.SingleTitle.text = SongData.Name;
+            Manager.RandomSelectorUI.SingleComposer.text = SongData.Cmps;
 
             if(TrackData.Diff == "SC") {
                 Manager.RandomSelectorUI.SingleLvParent.gameObject.SetActive(false);
@@ -90,38 +87,31 @@ public class RandomSelector : MonoBehaviour
                 for(int i = 0; i < TrackData.Lv; i++) Manager.RandomSelectorUI.SingleLvParent.Toggles[i].isOn = true;
             }
         }
-    }
-    public static List<TrackAdvanced> GetTracks() { return GetTracks(_Count); }
-    public static List<TrackAdvanced> GetTracks(int count = 1) {
-
-        List<TrackAdvanced> pass = SystemFileIO.TrackAdvancedData.tracks.FindAll( (t) =>  
-        (
-               ( (t.Bt.Equals("4B") && _4b)   || (t.Bt.Equals("5B") && _5b)   || (t.Bt.Equals("6B") && _6b)   || (t.Bt.Equals("8B") && _8b) )
-            && ( (t.Diff.Equals("NM") && _nm) || (t.Diff.Equals("HD") && _hd) || (t.Diff.Equals("MX") && _mx) || (t.Diff.Equals("SC") && _sc) )
-            && (
-                 (t.Lv == 1 && _1)   || (t.Lv == 2 && _2)   || (t.Lv == 3 && _3)   || (t.Lv == 4 && _4)   || (t.Lv == 5 && _5)   ||
-                 (t.Lv == 6 && _6)   || (t.Lv == 7 && _7)   || (t.Lv == 8 && _8)   || (t.Lv == 9 && _9)   || (t.Lv == 10 && _10) ||
-                 (t.Lv == 11 && _11) || (t.Lv == 12 && _12) || (t.Lv == 13 && _13) || (t.Lv == 14 && _14) || (t.Lv == 15 && _15)
-               )
-            && (
-                 (t.Ctgr == "RE" && _RE) || (t.Ctgr == "P1" && _P1) || (t.Ctgr == "P2" && _P2) || (t.Ctgr == "P3" && _P3) || (t.Ctgr == "T1" && _T1) || (t.Ctgr == "T2" && _T2) || (t.Ctgr == "T3" && _T3) || 
-                 (t.Ctgr == "BS" && _BS) || (t.Ctgr == "CE" && _CE) || (t.Ctgr == "TR" && _TR) || 
-                 (t.Ctgr == "VE" && _VE) || (t.Ctgr == "ES" && _ES) || (t.Ctgr == "CH" && _CH) || (t.Ctgr == "GC" && _GC) || 
-                 (t.Ctgr == "DM" && _DM) || (t.Ctgr == "CY" && _CY) || (t.Ctgr == "EM" && _EM) || 
-                 (t.Ctgr == "GF" && _GF) || (t.Ctgr == "GG" && _GG) || (t.Ctgr == "NX" && _NX)
-               )
-        ) );
-
-        pass = pass.OrderBy(a => Guid.NewGuid()).ToList();
-
-        List<TrackAdvanced> tracks = new List<TrackAdvanced>();
-        
-        for(int i = 0; i < count; i++){
-            if(i >= pass.Count)
-                tracks.Add(null);
-            else
-                tracks.Add(pass[i]);
+        else {
+            Manager.RandomSelectorUI.SingleUIScreen.SetActive(false);
+            Manager.RandomSelectorUI.NoneUIScreen.SetActive(true);
         }
+    }
+    public static List<MainData.TrackInfo> GetTracks() { return GetTracks(_Count); }
+    public static List<MainData.TrackInfo> GetTracks(int count = 1) {
+
+        IEnumerable<KeyValuePair<ushort, MainData.TrackInfo>> pass = SystemFileIO.MainData.TrackTable.Where((t) => {
+            MainData.TrackInfo TrackData = t.Value;
+
+            if( !( (TrackData.Bt.Equals("4B") && _4b)  || (TrackData.Bt.Equals("5B") && _5b)  || (TrackData.Bt.Equals("6B") && _6b)  || (TrackData.Bt.Equals("8B") && _8b) ) ) return false;
+            if( !( (TrackData.Diff.Equals("NM") && _nm) || (TrackData.Diff.Equals("HD") && _hd) || (TrackData.Diff.Equals("MX") && _mx) || (TrackData.Diff.Equals("SC") && _sc) ) ) return false;
+            if( !( (t.Value.Lv == 1 && _1) || (t.Value.Lv == 2 && _2) || (t.Value.Lv == 3 && _3) || (t.Value.Lv == 4 && _4) || (t.Value.Lv == 5 && _5)  || (t.Value.Lv == 6 && _6) || (t.Value.Lv == 7 && _7) || (t.Value.Lv == 8 && _8) || (t.Value.Lv == 9 && _9) || (t.Value.Lv == 10 && _10) || (t.Value.Lv == 11 && _11) || (t.Value.Lv == 12 && _12) || (t.Value.Lv == 13 && _13) || (t.Value.Lv == 14 && _14) || (t.Value.Lv == 15 && _15) ) ) return false;
+            
+            MainData.SongInfo SongData = SystemFileIO.GetSongData(t.Value.SongIndex);
+            if( !DLCs.Contains(SongData.Ctgr) ) return false;
+
+            return true;
+        });
+
+        pass = pass.OrderBy(a => Guid.NewGuid());
+        pass = pass.Take(Mathf.Min(pass.Count(), count));
+
+        List<MainData.TrackInfo> tracks = new List<MainData.TrackInfo>(from x in pass select x.Value);
 
         return tracks;
     }
@@ -210,25 +200,11 @@ public class RandomSelector : MonoBehaviour
     public void _Lv14(bool b) { _14 = b; }
     public void _Lv15(bool b) { _15 = b; }
 
-    public void _D_RE(bool b) { _RE = b; }
-    public void _D_P1(bool b) { _P1 = b; }
-    public void _D_P2(bool b) { _P2 = b; }
-    public void _D_P3(bool b) { _P3 = b; }
-    public void _D_T1(bool b) { _T1 = b; }
-    public void _D_T2(bool b) { _T2 = b; }
-    public void _D_T3(bool b) { _T3 = b; }
-    public void _D_BS(bool b) { _BS = b; }
-    public void _D_CE(bool b) { _CE = b; }
-    public void _D_TR(bool b) { _TR = b; }
-    public void _D_VE(bool b) { _VE = b; }
-    public void _D_ES(bool b) { _ES = b; }
-    public void _D_CH(bool b) { _CH = b; }
-    public void _D_GC(bool b) { _GC = b; }
-    public void _D_DM(bool b) { _DM = b; }
-    public void _D_CY(bool b) { _CY = b; }
-    public void _D_EM(bool b) { _EM = b; }
-    public void _D_GF(bool b) { _GF = b; }
-    public void _D_GG(bool b) { _GG = b; }
-    public void _D_NX(bool b) { _NX = b; }
+    public static void DLC(bool state, string abbr) {
+        if(state)
+            DLCs.Add(abbr);
+        else
+            DLCs.Remove(abbr);
+    }
 #endregion
 }

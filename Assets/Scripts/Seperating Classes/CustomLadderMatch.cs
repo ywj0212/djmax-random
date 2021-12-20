@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Mirix.DMRV;
 
 public class CustomLadderMatch : MonoBehaviour
 {
+    [SerializeField] private Button MatchStartButton;
+
     public enum LadderState { Ready, BanPick, Main }
     public LadderState CustomLadderState = LadderState.Ready;
 
     private int CustomLadderRound = 1;
-    private List<TrackAdvanced> CustomLadderAllTracks = new List<TrackAdvanced>();
-    private List<TrackAdvanced> CustomLadderPickedTracksPool = new List<TrackAdvanced>();
-    private List<TrackAdvanced> CustomLadderPickedUsedTracks = new List<TrackAdvanced>();
+    private MainData.TrackInfo? PreviousRoundTrackInfo;
+    private List<MainData.TrackInfo> CustomLadderAllTracks = new List<MainData.TrackInfo>();
+    private List<MainData.TrackInfo> CustomLadderPickedTracksPool = new List<MainData.TrackInfo>();
+    private List<MainData.TrackInfo> CustomLadderPickedUsedTracks = new List<MainData.TrackInfo>();
     private List<bool> CustomLadderBanResult = new List<bool>();
 
     public void CustomLadderBanPick() {
@@ -26,17 +30,17 @@ public class CustomLadderMatch : MonoBehaviour
         CustomLadderAllTracks = RandomSelector.GetTracks();
 
         int index = 0;
-        foreach(TrackAdvanced TrackData in CustomLadderAllTracks) {
-            if(TrackData == null) break;
+        foreach(MainData.TrackInfo TrackData in CustomLadderAllTracks) {
 
             GameObject BanPick = Instantiate(Manager.CustomLadderUI.BanPickPrefab, Vector3.zero, Quaternion.identity, Manager.CustomLadderUI.BanPickGridParent);
             BanPick.transform.localScale = Vector3.one;
 
             L_BanPickTrack LBPT = BanPick.GetComponent<L_BanPickTrack>();
+            MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
 
-            LBPT.Title.text = TrackData.Name;
-            LBPT.Category.text = Manager.GetCategoryFullName(TrackData.Ctgr);
-            LBPT.Thumbnail.sprite = SystemFileIO.GetThumbnailSprite(TrackData.Name);
+            LBPT.Title.text = SongData.Name;
+            LBPT.Category.text = SystemFileIO.GetCategoryFullName(SongData.Ctgr);
+            SystemFileIO.GetThumbnailSprite(LBPT.Thumbnail, TrackData.SongIndex);
             LBPT.Difficulty.sprite = SystemFileIO.GetDifficultySprite(TrackData.Bt, TrackData.Diff);
             
             if(TrackData.Diff == "SC") {
@@ -61,10 +65,15 @@ public class CustomLadderMatch : MonoBehaviour
         }
 
         Manager.OpenCustomLadderBanPickPanel();
-        // LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.CustomLadderUI.BanPickScrollRect.transform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.CustomLadderUI.BanPickScrollRect.transform);
     }
     public void CustomLadderBanPickCallback(int index, bool enable) {
         CustomLadderBanResult[index] = enable;
+
+        if(CustomLadderBanResult.TrueForAll(b => !b))
+            MatchStartButton.interactable = false;
+        else
+            MatchStartButton.interactable = true;
     }
     public void CustomLadderBanPickCancel() {
         CustomLadderState = LadderState.Ready;
@@ -90,8 +99,15 @@ public class CustomLadderMatch : MonoBehaviour
             CustomLadderPickedTracksPool.AddRange(CustomLadderPickedUsedTracks);
             CustomLadderPickedUsedTracks.Clear();
         }
-        int SelectedIndex = UnityEngine.Random.Range(0, CustomLadderPickedTracksPool.Count);
-        TrackAdvanced TrackData = CustomLadderPickedTracksPool[SelectedIndex];
+
+        int SelectedIndex;
+        do {
+            SelectedIndex = UnityEngine.Random.Range(0, CustomLadderPickedTracksPool.Count);
+        }
+        while(PreviousRoundTrackInfo.HasValue && CustomLadderPickedTracksPool.Count > 1 && PreviousRoundTrackInfo.Value.Equals(CustomLadderPickedTracksPool[SelectedIndex]));
+        MainData.TrackInfo TrackData = CustomLadderPickedTracksPool[SelectedIndex];
+        PreviousRoundTrackInfo = TrackData;
+        
         CustomLadderPickedTracksPool.RemoveAt(SelectedIndex);
         CustomLadderPickedUsedTracks.Add(TrackData);
 
@@ -99,9 +115,11 @@ public class CustomLadderMatch : MonoBehaviour
         Round.transform.localScale = Vector3.one;
 
         L_Round LR = Round.GetComponent<L_Round>();
+        MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
+
         LR.RoundTitle.text = $"ROUND {CustomLadderRound}";
-        LR.Title.text = TrackData.Name;
-        LR.Thumbnail.sprite = SystemFileIO.GetThumbnailSprite(TrackData.Name);
+        LR.Title.text = SongData.Name;
+        SystemFileIO.GetThumbnailSprite(LR.Thumbnail, TrackData.SongIndex);
         LR.Difficulty.sprite = SystemFileIO.GetDifficultySprite(TrackData.Bt, TrackData.Diff);
 
         if(TrackData.Diff == "SC") {
@@ -119,8 +137,9 @@ public class CustomLadderMatch : MonoBehaviour
                 LR.LvToggleParent.Toggles[i].isOn = true;
         }
 
-        // LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.CustomLadderUI.RoundScrollRect.transform);
         DOTween.To(() => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition, x => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition = x, 0f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.3f);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Round.transform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.CustomLadderUI.RoundVerticalParent);
         CustomLadderRound++;
     }
     public void CustomLadderMatchEnd() {

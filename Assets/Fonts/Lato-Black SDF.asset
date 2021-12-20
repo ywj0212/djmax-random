@@ -80,8 +80,8 @@ Material:
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
+    - _StencilReadMask: 1
+    - _StencilWriteMask: 0
     - _TextureHeight: 1024
     - _TextureWidth: 1024
     - _UnderlayDilate: 0
@@ -1537,20 +1537,6 @@ MonoBehaviour:
       m_Height: 0
     m_Scale: 1
     m_AtlasIndex: 0
-  - m_Index: 240
-    m_Metrics:
-      m_Width: 103.375
-      m_Height: 24.28125
-      m_HorizontalBearingX: 4.265625
-      m_HorizontalBearingY: 23.28125
-      m_HorizontalAdvance: 111.890625
-    m_GlyphRect:
-      m_X: 447
-      m_Y: 154
-      m_Width: 104
-      m_Height: 25
-    m_Scale: 1
-    m_AtlasIndex: 0
   - m_Index: 153
     m_Metrics:
       m_Width: 69.71875
@@ -1563,6 +1549,20 @@ MonoBehaviour:
       m_Y: 852
       m_Width: 70
       m_Height: 69
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 240
+    m_Metrics:
+      m_Width: 103.375
+      m_Height: 24.28125
+      m_HorizontalBearingX: 4.265625
+      m_HorizontalBearingY: 23.28125
+      m_HorizontalAdvance: 111.890625
+    m_GlyphRect:
+      m_X: 447
+      m_Y: 154
+      m_Width: 104
+      m_Height: 25
     m_Scale: 1
     m_AtlasIndex: 0
   m_CharacterTable:
@@ -1951,12 +1951,12 @@ MonoBehaviour:
     m_GlyphIndex: 98
     m_Scale: 1
   - m_ElementType: 1
-    m_Unicode: 8230
-    m_GlyphIndex: 240
-    m_Scale: 1
-  - m_ElementType: 1
     m_Unicode: 215
     m_GlyphIndex: 153
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 8230
+    m_GlyphIndex: 240
     m_Scale: 1
   m_AtlasTextures:
   - {fileID: -7105890495701470022}

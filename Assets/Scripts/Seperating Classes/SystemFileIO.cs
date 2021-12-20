@@ -6,107 +6,10 @@ using System.IO;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
-
-// TODO 개발자 도구부터 제작하여 초기화 구문 삭제, %appdata% 에 있는 시리얼라이즈드 된 결과 사용
-[Serializable] public class MainData {
-    public string Version = "211225 v6 Stable";
-    public Dictionary<string, string> CategoryAbbr = new Dictionary<string, string>() { // TODO 데이터 수정할 수 있는 개발자 도구 생기면 초기화 구문 삭제!!!
-        { "P1", "PORTABLE 1" },
-        { "P2", "PORTABLE 2" },
-        { "P3", "PORTABLE 3" },
-        { "RE", "RESPECT" },
-        { "VE", "V EXTENSION" },
-        { "ES", "EMOTIONAL S." },
-        { "CE", "CLAZZIQUAI EDITION" },
-        { "BS", "BLACK SQUARE" },
-        { "TR", "TRILOGY" },
-        { "T1", "TECHNIKA" },
-        { "T2", "TECHNIKA 2" },
-        { "T3", "TECHNIKA 3" }
-    };
-   
-    public Notification[] Notifications;
-    [Serializable] public struct Notification {
-        public string Header;
-        public string Body;
-    }
-
-    public Dictionary<ushort, SongInfo>  SongTable;
-    public Dictionary<ushort, TrackInfo> TrackTable;
-    [Serializable] public struct SongInfo {
-        public string Ctgr;
-        public string Name;
-        public string Cmps;
-    }
-    [Serializable] public struct TrackInfo {
-        public ushort SongIndex;
-        public string Bt;
-        public string Diff;
-        public byte   Lv;
-    }
-
-    public BoardInfo DefaultBoard;
-}
-
-
-// ! 파일 형식 변화로 인해서 업데이트 되어야 함!
-// ? 데이터 파일이 모두 웹서버로 이전됨에 따라 모든 데이터 셋이 MainData 클래스로 통합되어 삭제됨.
-[Serializable] public class TrackAdvancedData {
-    public List<TrackAdvanced> tracks;
-}
-[Serializable] public class TrackAdvanced {
-    public ushort Index;
-    public string Ctgr;
-    public string Name;
-    public string Cmps;
-    public string Bt;
-    public string Diff;
-    public byte Lv;
-}
-[Serializable] public class TrackSimpleData {
-    public List<TrackSimple> tracks;
-}
-[Serializable] public class TrackSimple {
-    public string Ctgr;
-    public string Name;
-    public string Cmps;
-}
-// ! 여기까지
-
-
-[Serializable] public class Board {
-    public enum Type : byte { Seperated, Combined }
-    public enum Ctgr : byte { Level, Custom }
-    public enum Button : byte { _4B = 0, _5B = 1, _6B = 2, _8B = 3, All = 0 }
-    
-    public bool Modifyable;
-    public Type ButtonType;
-    public Ctgr CategoryType;
-    public ButtonData[] Buttons = new ButtonData[4];
-
-    [Serializable] public class ButtonData {
-        public List<LvData> Lv;
-
-        [Serializable] public class LvData {
-            public byte Lv;
-            public List<FloorData> Floor;
-
-            [Serializable] public class FloorData {
-                public string Name;
-                public List<ushort> Tracks;
-            }
-        }
-    }
-}
-[Serializable] public class BoardInfo {
-    public string Name;
-    public Board Board;
-
-    public BoardInfo(string name, Board board) {
-        Name = name;
-        Board = board;
-    }
-}
+using UnityEngine.UI;
+using UnityEngine.Networking;
+using Mirix.DMRV;
+using DG.Tweening;
 
 [Serializable] public class AchievementData {
     public List<Achievement> achievements = new List<Achievement>();
@@ -126,50 +29,44 @@ public class SystemFileIO : Singleton<SystemFileIO>
     [Header("Save Path")]
     [SerializeField] private string BoardDataRoot;
 
-    [Header("JSON Data")]
-    [SerializeField] private TextAsset AdvancedJson;
-    [SerializeField] private TextAsset SimpleJson;
-    [SerializeField] private TextAsset DefaultBoardJson;
+    [Header("References")]
+    [SerializeField] private BoardManager BoardManager;
 
     [Header("Resources Path")]
     [SerializeField] private string ThumbnailResourcePath;
     [SerializeField] private string PreviewResourcePath;
     [SerializeField] private string DifficultyResourcePath;
     [SerializeField] private string CategoryResourcePath;
-    [SerializeField] private string AchievementDifficultyResourcePath;
+    [SerializeField] private string AchievementTagResourcePath;
 
     private string BoardRootPath             => string.Format("{0}/{1}", Application.persistentDataPath, BoardDataRoot);
     private string AchievementPath           => string.Format("{0}/{1}.json", Application.persistentDataPath, "achievements");
     private string SettingPath               => string.Format("{0}/{1}.json", Application.persistentDataPath, "setting");
     private string CustomAchievementListPath => string.Format("{0}/{1}.json", Application.persistentDataPath, "customlist");
     
-    public static TrackAdvancedData TrackAdvancedData;
-    public static TrackSimpleData   TrackSimpleData;
+    public static MainData MainData = new MainData();
+
     public static AchievementData   AchievementData;
     public static List<BoardInfo>   Boards = new List<BoardInfo>();
     public static SettingData       SettingData;
 
-    private void Start() {
-        LoadData();
-    }
-    private void LoadData() {
-        TrackAdvancedData      = JsonUtility.FromJson<TrackAdvancedData>(AdvancedJson.text);
-        TrackSimpleData        = JsonUtility.FromJson<TrackSimpleData>  (SimpleJson.text);
-
-        BoardInfo DefaultBoardData = new BoardInfo("Unofficial Level Table", JsonUtility.FromJson<Board>(DefaultBoardJson.text));
-        Boards.Add(DefaultBoardData);
+    public static void LoadData() {
+        Boards.AddRange(MainData.DefaultBoards);
 
         BinaryFormatter BF = new BinaryFormatter();
-        DirectoryInfo DI = new DirectoryInfo(BoardRootPath);
+        DirectoryInfo DI = new DirectoryInfo(inst.BoardRootPath);
         if(!DI.Exists)
-            Directory.CreateDirectory(BoardRootPath);
+            Directory.CreateDirectory(inst.BoardRootPath);
         foreach(FileInfo f in DI.GetFiles()) {
             BoardInfo BI = new BoardInfo(f.Name, (Board)BF.Deserialize(new FileStream(f.FullName, FileMode.Open)));
             Boards.Add(BI);
         }
 
-        AchievementData        = LoadJson<AchievementData>(AchievementPath) ?? new AchievementData();
-        SettingData            = LoadJson<SettingData>    (SettingPath) ?? new SettingData();
+        AchievementData        = LoadJson<AchievementData>(inst.AchievementPath) ?? new AchievementData();
+        SettingData            = LoadJson<SettingData>    (inst.SettingPath) ?? new SettingData();
+
+        inst.BoardManager.ChangeBoard(0);
+        inst.BoardManager.UpdateBoardDropdown();
     }
 
     private void SaveBoardData(BoardInfo boardinfo) {
@@ -185,7 +82,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
         File.Delete($"{BoardRootPath}/{name}.djmxdat");
     }
 
-    public static void SaveAchievement(ushort index, Achievement.State state) {
+    public static void SaveAchievementState(ushort index, Achievement.State state) {
         Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));
         if(achievement == null) {
             achievement = new Achievement();
@@ -198,7 +95,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
 
         SaveJson<AchievementData>(AchievementData, inst.AchievementPath);
     }
-    public static Achievement GetAchievementSave(ushort index) {
+    public static void SaveAchievementRate(ushort index, float rate) {
         Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));
         if(achievement == null) {
             achievement = new Achievement();
@@ -207,29 +104,88 @@ public class SystemFileIO : Singleton<SystemFileIO>
             achievement.Status = Achievement.State.None;
         }
 
+        achievement.Rate = rate;
+
+        SaveJson<AchievementData>(AchievementData, inst.AchievementPath);
+    }
+    public static Achievement GetAchievementSave(ushort index) {
+        Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));
+        if(achievement == null) {
+            achievement = new Achievement();
+            AchievementData.achievements.Add(achievement);
+            achievement.Index = index;
+            achievement.Status = Achievement.State.None;
+            achievement.Rate = 0f;
+        }
+
         return achievement;
     }
-    public static TrackAdvanced GetTrackAdvancedData(int index) {
-        TrackAdvanced trackData = TrackAdvancedData.tracks.FirstOrDefault((x) => (x.Index == index));
-        if(trackData == null)
-            throw new InvalidDataException();
-        
-        return trackData;
+    
+    public static MainData.TrackInfo GetTrackData(ushort index) {
+        return MainData.TrackTable[index];
     }
-    public static Sprite GetThumbnailSprite(string name) {
-        return Resources.Load<Sprite>(inst.ThumbnailResourcePath + name);
+    public static MainData.SongInfo GetSongData(ushort index) {
+        return MainData.SongTable[index];
     }
-    public static Sprite GetPreviewSprite(string name) {
-        return Resources.Load<Sprite>(inst.PreviewResourcePath + name);
+    public static string GetCategoryFullName(string abbr) {
+        try {
+            return MainData.CategoryAbbr[abbr];
+        }
+        catch {
+            return "COLLABORATION";
+        }
     }
     public static Sprite GetDifficultySprite(string button, string difficulty) {
         return Resources.Load<Sprite>(inst.DifficultyResourcePath + button + difficulty) ?? Resources.Load<Sprite>(inst.DifficultyResourcePath + "4BNM");
     }
-    public static Sprite GetCategorySprite(string category) {
-        return Resources.Load<Sprite>(inst.CategoryResourcePath + category) ?? Resources.Load<Sprite>(inst.CategoryResourcePath + "COLLABOR");
-    }
     public static Sprite GetAchievementDifficultySprite(string difficulty) {
-        return Resources.Load<Sprite>(inst.AchievementDifficultyResourcePath + difficulty);
+        return Resources.Load<Sprite>(inst.AchievementTagResourcePath + difficulty);
+    }
+    public static Sprite GetAchievementButtonSprite(string button) {
+        return Resources.Load<Sprite>(inst.AchievementTagResourcePath + button);
+    }
+    
+    public static void GetCategorySprite(Image target, string category) {
+        if(!MainData.CategoryAbbr.ContainsKey(category))
+            category = "COLLAB";
+        
+        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"category/{category}"));
+    }
+    public static void GetThumbnailSprite(Image target, ushort index) {
+        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"thumbnail/{index}"));
+    }
+    public static void GetPreviewSprite(Image target, ushort index) {
+        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"preview/{index}"));
+    }
+
+    public static void GetLoadingSprite(Image target) {
+        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"BG"));
+    }
+    public static void GetLoadingSprite(Image target, ushort index) {
+        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"loading/{index}"));
+    }
+
+    private IEnumerator ApplySpriteFromWeb(Image target, string path)  {
+        target.fillAmount = 0;
+        string webroot = "https://req.mirix.kr/dmrv-random/";
+        string url = webroot + path + ".png";
+        UnityWebRequest webReq = UnityWebRequestTexture.GetTexture(url);
+        yield return webReq.SendWebRequest();
+
+        if(webReq.result == UnityWebRequest.Result.ConnectionError || webReq.result == UnityWebRequest.Result.ProtocolError) {
+            print($"{webReq.error} at {path}");
+        }
+        else {
+            Texture2D texture = ((DownloadHandlerTexture)webReq.downloadHandler).texture;
+            Rect rect = new Rect(0, 0, texture.width, texture.height);
+
+            if(target == null || target.gameObject == null)
+                yield break;
+
+            target.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+            Tween tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc);
+            target.GetComponent<ImageTweenDestroyer>().Tween = tw;
+        }
     }
 
     public static bool FileExists(string path) {

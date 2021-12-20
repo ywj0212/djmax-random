@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using Ookii.Dialogs;
+using Mirix.DMRV;
 
 public class FileDialogIO : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class FileDialogIO : MonoBehaviour
             return null;
     }
     private string GetSaveFilePath() {
-        SaveFileDialog.Title = "Import Board File";
+        SaveFileDialog.Title = "Export Board File";
         SaveFileDialog.Filter = "DJMAX Data File |*.dmrvbd";
         
         var Result = SaveFileDialog.ShowDialog();
@@ -42,7 +43,6 @@ public class FileDialogIO : MonoBehaviour
 
         if(path == null) {
             throw new System.NullReferenceException();
-            return;
         }
 
         BinaryFormatter BF = new BinaryFormatter();
@@ -53,7 +53,6 @@ public class FileDialogIO : MonoBehaviour
 
         if(path == null) {
             throw new System.NullReferenceException();
-            return null;
         }
 
         // TODO: 보드 명 입력 루틴 추가 필요

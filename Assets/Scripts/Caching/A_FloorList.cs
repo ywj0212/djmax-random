@@ -13,7 +13,18 @@ public class A_FloorList : MonoBehaviour
     public ReorderableList ReorderableList;
     [Space]
     [SerializeField] private Transform FoldIndicator;
+    [SerializeField] private Button DeleteFloorButton;
+    [SerializeField] private Button NewTrackButton;
     private bool isFolded = false;
+
+    public void FilterCheckEmpty() {
+        if(ListParent.ChildCountActive() == 0) {
+            gameObject.SetActive(false);
+        }
+        else {
+            gameObject.SetActive(true);
+        }
+    }
 
     public void FoldToggle() {
         isFolded ^= true;
@@ -30,7 +41,6 @@ public class A_FloorList : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent.parent);
     }
-
     public void OnReorder() {
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)ListParent);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
