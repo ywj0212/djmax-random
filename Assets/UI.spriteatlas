@@ -54,6 +54,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 424c7d70db1c90040bd1f1046aafab69, type: 3}
   - {fileID: 21300000, guid: 34029a90c7ccdd64e9dafbf13e639256, type: 3}
   - {fileID: 21300000, guid: b6ecedf03fce509418b763b7bf2d8b70, type: 3}
+  - {fileID: 21300000, guid: f8dfe3118f4b7d34ab9f3de98e5d1eea, type: 3}
   - {fileID: 21300000, guid: 34065481597f5d94b8d061f5560ebea3, type: 3}
   - {fileID: 21300000, guid: 3a5dd5d13c76d034a82b2a8d324527fb, type: 3}
   - {fileID: 21300000, guid: c2769d5291fb7f9489af929edf7c0083, type: 3}
@@ -145,6 +146,7 @@ SpriteAtlas:
   - 4B_Disabled
   - HD_ON
   - blank
+  - Empty
   - DuplicateIcon
   - NM
   - OptionIcon

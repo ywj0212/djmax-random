@@ -40,6 +40,7 @@ namespace UnityEngine.UI.Extensions
         public ReorderableListHandler OnElementDropped = new ReorderableListHandler();
         public ReorderableListHandler OnElementGrabbed = new ReorderableListHandler();
         public ReorderableListHandler OnElementRemoved = new ReorderableListHandler();
+        public UnityEvent OnElementReordered = new UnityEvent();
         public ReorderableListHandler OnElementAdded = new ReorderableListHandler();
         public ReorderableListHandler OnElementDisplacedFrom = new ReorderableListHandler();
         public ReorderableListHandler OnElementDisplacedTo = new ReorderableListHandler();

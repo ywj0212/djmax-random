@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 using TMPro;
 using Mirix.DMRV;
@@ -20,11 +21,14 @@ public class RandomSelector : MonoBehaviour
     public static List<string> DLCs = new List<string>();
     private static int _Count = 1;
 
+    public void OpenRandomSelector() {
+        foreach(Transform t in Manager.RandomSelectorUI.ResultListParent)
+            Destroy(t.gameObject);
+    }
     public void ShowRandomSelectorResult() {
         Manager.RandomSelectorUI.DefaultUIScreen.SetActive(false);
-        foreach(Transform t in Manager.RandomSelectorUI.ResultListParent) {
+        foreach(Transform t in Manager.RandomSelectorUI.ResultListParent)
             Destroy(t.gameObject);
-        }
 
         List<MainData.TrackInfo> Tracks = GetTracks(count:_Count);
         if(Tracks.Count > 1) {
@@ -32,8 +36,7 @@ public class RandomSelector : MonoBehaviour
             Manager.RandomSelectorUI.NoneUIScreen.SetActive(false);
 
             foreach(MainData.TrackInfo TrackData in Tracks) {
-                GameObject ResultList = Instantiate(Manager.RandomSelectorUI.ResultListPrefab);
-                ResultList.transform.SetParent(Manager.RandomSelectorUI.ResultListParent);
+                GameObject ResultList = Instantiate(Manager.RandomSelectorUI.ResultListPrefab, Manager.RandomSelectorUI.ResultListParent);
                 ResultList.transform.localScale = Vector3.one;
 
                 R_SelectedTrack RST = ResultList.GetComponent<R_SelectedTrack>();

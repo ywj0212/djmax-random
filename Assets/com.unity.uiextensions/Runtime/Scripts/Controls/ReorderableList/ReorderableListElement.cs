@@ -186,6 +186,8 @@ namespace UnityEngine.UI.Extensions
                 || _currentReorderableListRaycasted.maxItems <= 0)
             {
                 RefreshSizes();
+                if(_fakeElement.transform.parent != _reorderableList.DraggableArea)
+                    _reorderableList.OnElementReordered.Invoke();
                 _fakeElement.transform.SetParent(_reorderableList.DraggableArea, false);
                 // revert the displaced element when not hovering over its list
                 if (_displacedObject != null)
@@ -240,6 +242,8 @@ namespace UnityEngine.UI.Extensions
                     }
                 }
                 RefreshSizes();
+                if(_fakeElement.GetSiblingIndex() != targetIndex)
+                    _reorderableList.OnElementReordered.Invoke();
                 _fakeElement.SetSiblingIndex(targetIndex);
                 _fakeElement.gameObject.SetActive(true);
 

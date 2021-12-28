@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 using DG.Tweening;
 using Mirix.DMRV;
@@ -95,15 +96,13 @@ public class CustomLadderMatch : MonoBehaviour
         if(CustomLadderPickedTracksPool.Count == 0) {
             GameObject Alert = Instantiate(Manager.CustomLadderUI.RoundTrackAllUsedPrefab, Vector3.zero, Quaternion.identity, Manager.CustomLadderUI.RoundVerticalParent);
             Alert.transform.localScale = Vector3.one;
-            
             CustomLadderPickedTracksPool.AddRange(CustomLadderPickedUsedTracks);
             CustomLadderPickedUsedTracks.Clear();
         }
 
         int SelectedIndex;
-        do {
+        do 
             SelectedIndex = UnityEngine.Random.Range(0, CustomLadderPickedTracksPool.Count);
-        }
         while(PreviousRoundTrackInfo.HasValue && CustomLadderPickedTracksPool.Count > 1 && PreviousRoundTrackInfo.Value.Equals(CustomLadderPickedTracksPool[SelectedIndex]));
         MainData.TrackInfo TrackData = CustomLadderPickedTracksPool[SelectedIndex];
         PreviousRoundTrackInfo = TrackData;

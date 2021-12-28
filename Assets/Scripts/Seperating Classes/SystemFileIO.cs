@@ -65,7 +65,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
         AchievementData        = LoadJson<AchievementData>(inst.AchievementPath) ?? new AchievementData();
         SettingData            = LoadJson<SettingData>    (inst.SettingPath) ?? new SettingData();
 
-        inst.BoardManager.ChangeBoard(0);
+        inst.BoardManager.SetInitBoard();
         inst.BoardManager.UpdateBoardDropdown();
     }
 
@@ -169,6 +169,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
         target.fillAmount = 0;
         string webroot = "https://req.mirix.kr/dmrv-random/";
         string url = webroot + path + ".png";
+
         UnityWebRequest webReq = UnityWebRequestTexture.GetTexture(url);
         yield return webReq.SendWebRequest();
 
@@ -183,7 +184,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
                 yield break;
 
             target.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
-            Tween tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc);
+            Tween tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
             target.GetComponent<ImageTweenDestroyer>().Tween = tw;
         }
     }

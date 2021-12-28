@@ -56,7 +56,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: {fileID: 67672015798992760}
   ListParent: {fileID: 656404872354587348}
-  ReorderableList: {fileID: 7910297958881413248}
+  ReorderableList: {fileID: 3654286288280923865}
   FoldIndicator: {fileID: 5306683385601030062}
   DeleteFloorButton: {fileID: 8830967393734671369}
   NewTrackButton: {fileID: 7646333460270545725}
@@ -359,6 +359,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 656404872354587348}
+  - component: {fileID: 3654286288280923865}
   - component: {fileID: 7910297958881413248}
   - component: {fileID: 656404872354587350}
   - component: {fileID: 656404872354587349}
@@ -392,6 +393,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 872, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &3654286288280923865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656404872354587339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91154fd07840cf149bcb9b4433bdad27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Lv: 0
+  Floor: 0
+  List: {fileID: 7910297958881413248}
 --- !u!114 &7910297958881413248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,8 +425,8 @@ MonoBehaviour:
   IsDraggable: 1
   CloneDraggedObject: 0
   IsDropable: 1
-  IsDisplacable: 1
-  EqualizeSizesOnDrag: 1
+  IsDisplacable: 0
+  EqualizeSizesOnDrag: 0
   maxItems: 2147483647
   OnElementDropped:
     m_PersistentCalls:
@@ -457,6 +473,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnElementReordered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6696815316408042406}
+        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+        m_MethodName: OnReorder
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnElementAdded:
     m_PersistentCalls:
       m_Calls:
@@ -474,79 +505,19 @@ MonoBehaviour:
         m_CallState: 2
   OnElementDisplacedFrom:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
-        m_MethodName: OnReorder
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnElementDisplacedTo:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
-        m_MethodName: OnReorder
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnElementDisplacedFromReturned:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
-        m_MethodName: OnReorder
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnElementDisplacedToReturned:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
-        m_MethodName: OnReorder
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnElementDroppedWithMaxItems:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
-        m_MethodName: OnReorder
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &656404872354587350
 MonoBehaviour:
   m_ObjectHideFlags: 0

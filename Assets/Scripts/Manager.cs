@@ -74,9 +74,10 @@ public class Manager : Singleton<Manager>
         public Sprite[]          ButtonBackgroundSprites;
         public Sprite[]          ButtonTextSprites;
         [Space]
-        public Image             ButtonOptBG;
-        public Image             ButtonOptText;
-        public Animator          StarShineAnimator;
+        public Image                        ButtonOptBG;
+        public Image                        ButtonOptText;
+        public AchievementGradientAnimation ButtonGradientAnimation;
+        public Animator                     StarShineAnimator;
         [Space]
         public TextMeshProUGUI   Title;
         public TextMeshProUGUI   Composer;
@@ -84,10 +85,19 @@ public class Manager : Singleton<Manager>
         public Image             Preview;
         public TMP_InputField    RateField;
         public Color[]           IndicatorColor;
+        public Sprite[]          IndicatorSprite;
         public ButtonAnimation[] Difficulty;
         public LvToggleParent    LvToggleParent;
         public LvToggleParent    LvToggleSCParent;
         public ToggleGroup       StateToggleGroup;
+        [Space]
+        public TextMeshProUGUI   Averages;
+        public TextMeshProUGUI   PerfectPlayRatio;
+        public TextMeshProUGUI   MaxComboRatio;
+        public TextMeshProUGUI   ClearRatio;
+        public RectTransform     PerfectPlayBarChart;
+        public RectTransform     MaxComboBarChart;
+        public RectTransform     ClearBarChart;
         [Space]
         public Transform         ScrollViewport;
         public GameObject        LevelDivPrefab;
@@ -162,10 +172,8 @@ public class Manager : Singleton<Manager>
         BinaryFormatter bin = new BinaryFormatter();
 
         SystemFileIO.MainData = (MainData)bin.Deserialize(ms);
-        SystemFileIO.LoadData();
         SystemFileIO.GetLoadingSprite(BG);
         BGPrev.sprite = BG.sprite;
-        VersionText.text = SystemFileIO.MainData.Version;
 
         RandomSelector.DLCs.AddRange(SystemFileIO.MainData.DLCList);
         BoardManager.DLCs.AddRange(SystemFileIO.MainData.DLCList);
@@ -218,11 +226,12 @@ public class Manager : Singleton<Manager>
             }
         }
 
+        SystemFileIO.LoadData();
+        VersionText.text = SystemFileIO.MainData.Version;
         OpenAchievement(true);
 
     }
 
-    // ! public void SetSiblingIndex(int index); 이용하여 자식 객체 순서 변경 가능
     public void ChangeApplicationMode() {
         switch(AppState) {
             case State.Achievements: AppState = State.Random;       OpenRandomSelector(true); break;
@@ -235,23 +244,6 @@ public class Manager : Singleton<Manager>
         TitleStarShine.SetTrigger("Shine");
     }
 
-    public static string GetCategoryFullName(string abbr) {
-        switch(abbr) {
-            case "P1": return "PORTABLE 1";
-            case "P2": return "PORTABLE 2";
-            case "P3": return "PORTABLE 3";
-            case "RE": return "RESPECT";
-            case "VE": return "V EXTENSION";
-            case "ES": return "EMOTIONAL S.";
-            case "CE": return "CLAZZIQUAI EDITION";
-            case "BS": return "BLACK SQUARE";
-            case "TR": return "TRILOGY";
-            case "T1": return "TECHNIKA";
-            case "T2": return "TECHNIKA 2";
-            case "T3": return "TECHNIKA 3";
-            default:   return "COLLABORATION";
-        }
-    }
     public static void ClearPanel() { inst.ClearPanelTween(); }
     private void ClearPanelTween() {
         SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).SetEase(Ease.InOutCirc);
@@ -299,7 +291,6 @@ public class Manager : Singleton<Manager>
         return rect.rect.height * ratio;
     }
 
-    Coroutine LoadingAchievement;
     public static void OpenAchievement(bool isAppStateChanged = false) { inst._OpenAchievement(isAppStateChanged); }
     public static void OpenRandomSelector(bool isAppStateChanged = false) { inst._OpenRandomSelector(isAppStateChanged); }
     public static void OpenCustomLadder(bool isAppStateChanged = false) { inst._OpenCustomLadder(isAppStateChanged); }
@@ -315,11 +306,8 @@ public class Manager : Singleton<Manager>
             // PanelUpdate();
         }
         
-        if(LoadingAchievement != null)
-            StopCoroutine(LoadingAchievement);
-        
+        BoardManager.OpenAchievement();
         AppState = State.Achievements;
-        LoadingAchievement = StartCoroutine(BoardManager.OpenAchievementRoutine());
     }
     public void _OpenRandomSelector(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
@@ -333,9 +321,7 @@ public class Manager : Singleton<Manager>
 
             RandomSelectorUI.DefaultUIScreen.SetActive(true);
             RandomSelectorUI.SingleUIScreen.SetActive(false);
-            foreach(Transform t in RandomSelectorUI.ResultListParent) {
-                Destroy(t.gameObject);
-            }   
+            RandomSelector.OpenRandomSelector();
         }
         
         SystemFileIO.GetLoadingSprite(BG);

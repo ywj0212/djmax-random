@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public partial class BoardManager : MonoBehaviour
 {
+    [Header("Filter")]
     public Transform DLCToggleParent;
     public List<Toggle> DLCToggles = new List<Toggle>();
     public List<Toggle> DifficultyToggles = new List<Toggle>();
@@ -22,15 +23,23 @@ public partial class BoardManager : MonoBehaviour
             DLCs.Remove(abbr);
     }
     
+    private bool CheckFilter(BoardTrack boardTrack) {
+        if(!string.IsNullOrWhiteSpace(search)) {
+            return SystemFileIO.GetSongData(boardTrack.SongIndex).Name.Contains(search, System.StringComparison.OrdinalIgnoreCase) && DLCs.Contains(SystemFileIO.GetSongData(boardTrack.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("SC") && _sc));
+        }
+        else {
+            return DLCs.Contains(SystemFileIO.GetSongData(boardTrack.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(boardTrack.Index).Diff.Equals("SC") && _sc));
+        }
+    }
     private void ApplyFilter() {
-        if(!string.IsNullOrEmpty(search)) {
+        if(!string.IsNullOrWhiteSpace(search)) {
             var songs = 
                 (from s in SystemFileIO.MainData.SongTable
                  where s.Value.Name.Contains(search, System.StringComparison.OrdinalIgnoreCase)
                  select s.Key);
 
             foreach (var Track in AchievementTracks) {
-                Track.gameObject.SetActive(songs.Contains(Track.SongIndex) && DLCs.Contains(Track.Ctgr) && ((Track.Diff.Equals("NM") && _nm) || (Track.Diff.Equals("HD") && _hd) || (Track.Diff.Equals("MX") && _mx) || (Track.Diff.Equals("SC") && _sc)));
+                Track.gameObject.SetActive(songs.Contains(Track.SongIndex) && DLCs.Contains(SystemFileIO.GetSongData(Track.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(Track.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("SC") && _sc)));
             }
 
             FilterFloorEvent?.Invoke();
@@ -51,7 +60,7 @@ public partial class BoardManager : MonoBehaviour
         else
         {
             foreach(var Track in AchievementTracks) {
-                Track.gameObject.SetActive( DLCs.Contains(Track.Ctgr) && ((Track.Diff.Equals("NM") && _nm) || (Track.Diff.Equals("HD") && _hd) || (Track.Diff.Equals("MX") && _mx) || (Track.Diff.Equals("SC") && _sc)) );
+                Track.gameObject.SetActive( DLCs.Contains(SystemFileIO.GetSongData(Track.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(Track.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("SC") && _sc)) );
             }
 
             FilterFloorEvent?.Invoke();
