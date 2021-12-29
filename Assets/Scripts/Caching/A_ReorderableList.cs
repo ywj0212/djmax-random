@@ -14,7 +14,7 @@ public class A_ReorderableList : MonoBehaviour
     }
     public void DropableCheck(byte? Lv) {
         if(!Lv.HasValue) List.IsDropable = true;
-        else if(Lv.Value == Lv) List.IsDropable = true;
+        else if(Lv.Value == this.Lv) List.IsDropable = true;
         else List.IsDropable = false;
     }
 }

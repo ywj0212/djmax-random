@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using Mirix.DMRV;
+using DG.Tweening;
 
 public partial class BoardManager : MonoBehaviour
 {
@@ -12,10 +13,9 @@ public partial class BoardManager : MonoBehaviour
     [SerializeField] private Sprite                 EditSprite;
     [SerializeField] private Sprite                 SaveSprite;
     [SerializeField] private GameObject             NewTrackModal;
-    [SerializeField] private GameObject             DeleteTrackList;
+    [SerializeField] private CanvasGroup            DeleteTrackList;
+    private bool isEditing = false;
 
-    //* FromList.gameObject.GetComponent<\datacontainer\>... 통해서 Level, Floor의 인덱스를 얻고!
-    //* ...RemoveAt(FromIndex), ...Insert(ToIndex, \data\) 이용해서 이전!
     public void ReorderablePick(ReorderableList.ReorderableListEventStruct e) {
         A_ReorderableList RD = e.FromList.GetComponent<A_ReorderableList>();
         if(CurrentBoard.Board.CategoryType == Board.Ctgr.Custom)
@@ -23,44 +23,48 @@ public partial class BoardManager : MonoBehaviour
         else
             BoardReorderEvent.Invoke(RD.Lv);
 
-        
-        print($"Pick ▶ L{RD.Lv} / F{RD.Floor} / {e.FromIndex}");
+        CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.Find(l => l.Lv == RD.Lv).Floor[RD.Floor].Tracks.RemoveAt(e.FromIndex);
     }
     public void ReorderableDrop(ReorderableList.ReorderableListEventStruct e) {
         A_ReorderableList RD = e.ToList.GetComponent<A_ReorderableList>();
         BoardReorderEvent.Invoke(null);
 
-        print($"Drop ▶ L{RD.Lv} / F{RD.Floor} / {e.ToIndex}");
+        ushort Index = e.DroppedObject.GetComponent<BoardTrack>().Index;
+        CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.Find(l => l.Lv == RD.Lv).Floor[RD.Floor].Tracks.Insert(e.ToIndex, Index);
     }
 
-    //* Transform.GetSiblingIndex(), Transform.childCount 두 개 써서 뭔가 뭔가 할 수 있을 듯
-    //* 집어들면 삭제(RemoveAt(index)), 내려놓으면 추가/서순(Insert(index))
-    private BoardInfo Editing;
     public void SetEditMode(bool b) {
         if(b) {
+            isEditing = true;
             EditToggleImage.sprite = SaveSprite;
             BoardEditEvent.Invoke(true);
+            DeleteTrackList.gameObject.SetActive(true);
+            DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 1f, 0.6f).SetEase(Ease.InOutCirc);
         }
         else {
+            isEditing = false;
             EditToggleImage.sprite = EditSprite;
             BoardEditEvent.Invoke(false);
+            DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 0f, 0.6f).SetEase(Ease.InOutCirc);
+            DOVirtual.DelayedCall(0.6f, () => DeleteTrackList.gameObject.SetActive(false));
         }
     }
     
-    public void RestrictDrop() {
-
-    }
-    public void ApplyDrop() {
-
-    }
-    
-    public void AddLevel() {
+    // * 콜백은 연결 해놓았음.
+    // TODO: 모달 창 만들고, 뜨는 거 만들어서 적용하기...
+    public void OpenAddLevelModal(Transform parent) {
         
     }
-    public void AddFloor() {
+    public void OpenDeleteLevelModal(byte lv) {
+        
+    }
+    public void OpenAddFloorModal(Transform parent, byte lv) {
 
     }
-    public void AddTrackToFloor() {
+    public void OpenAddTrackToFloorModal(Transform parent, byte lv, byte floorIndex) {
         
+    }
+    public void OpenDeleteFloorModal(byte lv, byte floorIndex) {
+
     }
 }

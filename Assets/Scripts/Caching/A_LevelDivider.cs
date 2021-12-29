@@ -12,17 +12,16 @@ public class A_LevelDivider : MonoBehaviour
     public Transform FloorParent;
     [Space]
     [SerializeField] private Transform FoldIndicator;
-    [SerializeField] private Button DeleteLevelButton;
-    [SerializeField] private Button NewFloorButton;
+    public Button DeleteLevelButton;
+    public Button NewFloorButton;
     private bool isFolded = false;
 
+    public void SetEditMode(bool state) {
+        DeleteLevelButton.gameObject.SetActive(state);
+        NewFloorButton.gameObject.SetActive(state);
+    }
     public void FilterCheckEmpty() {
-        if(FloorParent.ChildCountActive() == 0) {
-            gameObject.SetActive(false);
-        }
-        else {
-            gameObject.SetActive(true);
-        }
+        gameObject.SetActive(FloorParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {

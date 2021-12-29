@@ -38,7 +38,7 @@ public class FileDialogIO : MonoBehaviour
             return null;
     }
 
-    public void ExportBoardData(Board board) {
+    public void ExportBoardData(BoardInfo board) {
         string path = GetSaveFilePath();
 
         if(path == null) {
@@ -58,7 +58,7 @@ public class FileDialogIO : MonoBehaviour
         // TODO: 보드 명 입력 루틴 추가 필요
 
         BinaryFormatter BF = new BinaryFormatter();
-        return new BoardInfo("", (Board)BF.Deserialize(new FileStream(path, FileMode.Open)));
+        return (BoardInfo)BF.Deserialize(new FileStream(path, FileMode.Open));
     }
     public void SavePng(string path, Texture2D texture2D) {
 

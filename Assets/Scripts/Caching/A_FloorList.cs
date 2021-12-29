@@ -12,8 +12,8 @@ public class A_FloorList : MonoBehaviour
     public A_ReorderableList ReorderableList;
 
     [SerializeField] private Transform FoldIndicator;
-    [SerializeField] private Button DeleteFloorButton;
-    [SerializeField] private Button NewTrackButton;
+    public Button DeleteFloorButton;
+    public Button NewTrackButton;
     private bool isFolded = false;
     
     public void SetEditMode(bool state) {
@@ -22,12 +22,7 @@ public class A_FloorList : MonoBehaviour
         ReorderableList.SetState(state);
     }
     public void FilterCheckEmpty() {
-        if(ListParent.ChildCountActive() == 0) {
-            gameObject.SetActive(false);
-        }
-        else {
-            gameObject.SetActive(true);
-        }
+        gameObject.SetActive(ListParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {
@@ -39,17 +34,24 @@ public class A_FloorList : MonoBehaviour
         else
             FoldIndicator.DORotate(Vector3.zero, 0.3f).SetEase(Ease.InOutCirc);
         
-        RebuildLayout();
+        StartCoroutine(RebuildLayout());
     }
     public void OnReorder() {
-        DOVirtual.DelayedCall(0.01f, RebuildLayout);
+        StartCoroutine(RebuildLayout());
     }
-    public void RebuildLayout() {
+    private IEnumerator RebuildLayout() {
+        foreach(RectTransform t in ListParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)ListParent);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent.parent);
+        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent.parent.parent);
     }
 }

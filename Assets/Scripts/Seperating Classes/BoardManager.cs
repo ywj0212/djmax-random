@@ -122,7 +122,7 @@ public partial class BoardManager : MonoBehaviour
                     
         float average = Mathf.Floor((sum / ratecount) * 100f) / 100f;
         
-        Manager.AchievementUI.Averages.text = string.Format("{0:0.00}%", average);
+        Manager.AchievementUI.Averages.text = ((ratecount != 0) ? string.Format("{0:0.00}%", average) : "0.00%");
         Manager.AchievementUI.PerfectPlayRatio.text = $"{perfect}/{count}";
         Manager.AchievementUI.MaxComboRatio.text = $"{maxcombo}/{count}";
         Manager.AchievementUI.ClearRatio.text = $"{clear}/{count}";
@@ -185,7 +185,9 @@ public partial class BoardManager : MonoBehaviour
                         LDUI.LvToggleParent.gameObject.SetActive(false);
                     }
                     FilterLevelEvent += new FilterCallback(LDUI.FilterCheckEmpty);
-
+                    BoardEditEvent += new BoardEditCall(LDUI.SetEditMode);
+                    LDUI.DeleteLevelButton.onClick.AddListener(() => OpenDeleteLevelModal(Lv));
+                    LDUI.NewFloorButton.onClick.AddListener(() => OpenAddFloorModal(LDUI.FloorParent, Lv));
 
                     for(int j = (LevelList[i].Floor.Count - 1); j >= 0; j--) {
                         GameObject Floor = Instantiate(Manager.AchievementUI.FloorListPrefab, Vector3.zero, Quaternion.identity, LDUI.FloorParent);
@@ -199,6 +201,8 @@ public partial class BoardManager : MonoBehaviour
                         BoardReorderEvent += new BoardReorderCall(FL.ReorderableList.DropableCheck);
                         FL.ReorderableList.List.OnElementGrabbed.AddListener(ReorderablePick);
                         FL.ReorderableList.List.OnElementAdded.AddListener(ReorderableDrop);
+                        FL.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FL.ListParent, Lv, (byte)j));
+                        FL.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(Lv, (byte)j));
 
                         if(TargetBoardData.CategoryType == Board.Ctgr.Level)
                             FL.Title.text = $"Floor {j+1}";

@@ -20,15 +20,12 @@ using DG.Tweening;
     public enum State : sbyte { None = 0, Clear = 1, MaxCombo = 2, Perfect = 3 }
     public State Status;
 }
-[Serializable] public class SettingData {
-    public List<ushort> BannedSong;
+[Serializable] public class BoardData {
+    public List<BoardInfo> Boards = new List<BoardInfo>();
 }
 
 public class SystemFileIO : Singleton<SystemFileIO>
 {
-    [Header("Save Path")]
-    [SerializeField] private string BoardDataRoot;
-
     [Header("References")]
     [SerializeField] private BoardManager BoardManager;
 
@@ -39,47 +36,45 @@ public class SystemFileIO : Singleton<SystemFileIO>
     [SerializeField] private string CategoryResourcePath;
     [SerializeField] private string AchievementTagResourcePath;
 
-    private string BoardRootPath             => string.Format("{0}/{1}", Application.persistentDataPath, BoardDataRoot);
-    private string AchievementPath           => string.Format("{0}/{1}.json", Application.persistentDataPath, "achievements");
-    private string SettingPath               => string.Format("{0}/{1}.json", Application.persistentDataPath, "setting");
-    private string CustomAchievementListPath => string.Format("{0}/{1}.json", Application.persistentDataPath, "customlist");
+    private static string BoardDataPath     => string.Format("{0}/{1}.bin", Application.persistentDataPath, "boards");
+    private static string AchievementPath   => string.Format("{0}/{1}.json", Application.persistentDataPath, "achiv");
     
     public static MainData MainData = new MainData();
 
     public static AchievementData   AchievementData;
     public static List<BoardInfo>   Boards = new List<BoardInfo>();
-    public static SettingData       SettingData;
+    public static BoardData         BoardData;
 
     public static void LoadData() {
         Boards.AddRange(MainData.DefaultBoards);
 
         BinaryFormatter BF = new BinaryFormatter();
-        DirectoryInfo DI = new DirectoryInfo(inst.BoardRootPath);
-        if(!DI.Exists)
-            Directory.CreateDirectory(inst.BoardRootPath);
-        foreach(FileInfo f in DI.GetFiles()) {
-            BoardInfo BI = new BoardInfo(f.Name, (Board)BF.Deserialize(new FileStream(f.FullName, FileMode.Open)));
-            Boards.Add(BI);
+        FileInfo FI = new FileInfo(BoardDataPath);
+        FileStream FS;
+        if(!FI.Exists) {
+            FS = File.Open(BoardDataPath, FileMode.Create);
+            BF.Serialize(FS, new BoardData());
+            FS.Close();
         }
+        FS = File.Open(BoardDataPath, FileMode.Open);
+        BoardData = (BoardData)BF.Deserialize(FS);
+        FS.Close();
+        Boards.AddRange(BoardData.Boards);
 
-        AchievementData        = LoadJson<AchievementData>(inst.AchievementPath) ?? new AchievementData();
-        SettingData            = LoadJson<SettingData>    (inst.SettingPath) ?? new SettingData();
+        AchievementData        = LoadJson<AchievementData>(AchievementPath) ?? new AchievementData();
 
         inst.BoardManager.SetInitBoard();
         inst.BoardManager.UpdateBoardDropdown();
     }
 
     private void SaveBoardData(BoardInfo boardinfo) {
-        string path = $"{BoardRootPath}/{boardinfo.Name}.djmxdat";
-        BinaryFormatter BF = new BinaryFormatter();
-        BF.Serialize(File.Create(path), boardinfo.Board);
+        
     }
-    private void CreateBoard(string name) {
-        File.Create($"{BoardRootPath}/{name}.djmxdat");
-        new BoardInfo(name, new Board());
+    private void CreateBoard(int index) {
+        
     }
-    private void DeleteBoard(string name) {
-        File.Delete($"{BoardRootPath}/{name}.djmxdat");
+    private void DeleteBoard(int index) {
+        
     }
 
     public static void SaveAchievementState(ushort index, Achievement.State state) {
@@ -93,7 +88,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
 
         achievement.Status = state;
 
-        SaveJson<AchievementData>(AchievementData, inst.AchievementPath);
+        SaveJson<AchievementData>(AchievementData, AchievementPath);
     }
     public static void SaveAchievementRate(ushort index, float rate) {
         Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));
@@ -106,7 +101,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
 
         achievement.Rate = rate;
 
-        SaveJson<AchievementData>(AchievementData, inst.AchievementPath);
+        SaveJson<AchievementData>(AchievementData, AchievementPath);
     }
     public static Achievement GetAchievementSave(ushort index) {
         Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));

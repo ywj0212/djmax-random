@@ -11,7 +11,7 @@ public class CustomLadderMatch : MonoBehaviour
     [SerializeField] private Button MatchStartButton;
 
     public enum LadderState { Ready, BanPick, Main }
-    public LadderState CustomLadderState = LadderState.Ready;
+    [HideInInspector] public LadderState CustomLadderState = LadderState.Ready;
 
     private int CustomLadderRound = 1;
     private MainData.TrackInfo? PreviousRoundTrackInfo;
