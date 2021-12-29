@@ -133,7 +133,7 @@ public partial class BoardManager : MonoBehaviour
 
     private List<BoardTrack> AchievementTracks = new List<BoardTrack>();
     private List<ushort> AchievementTrackIndexes = new List<ushort>();
-    private delegate void FilterCallback();
+    private delegate void FilterCallback(bool isFilter);
     private delegate void BoardEditCall(bool isEditing);
     private delegate void BoardReorderCall(byte? lv);
     private event FilterCallback FilterFloorEvent;
@@ -186,8 +186,8 @@ public partial class BoardManager : MonoBehaviour
                     }
                     FilterLevelEvent += new FilterCallback(LDUI.FilterCheckEmpty);
                     BoardEditEvent += new BoardEditCall(LDUI.SetEditMode);
-                    LDUI.DeleteLevelButton.onClick.AddListener(() => OpenDeleteLevelModal(Lv));
-                    LDUI.NewFloorButton.onClick.AddListener(() => OpenAddFloorModal(LDUI.FloorParent, Lv));
+                    LDUI.DeleteLevelButton.onClick.AddListener(() => OpenDeleteLevelModal(Manager.BoardButton, Lv));
+                    LDUI.NewFloorButton.onClick.AddListener(() => OpenAddFloorModal(LDUI.FloorParent, Manager.BoardButton, Lv));
 
                     for(int j = (LevelList[i].Floor.Count - 1); j >= 0; j--) {
                         GameObject Floor = Instantiate(Manager.AchievementUI.FloorListPrefab, Vector3.zero, Quaternion.identity, LDUI.FloorParent);
@@ -201,13 +201,10 @@ public partial class BoardManager : MonoBehaviour
                         BoardReorderEvent += new BoardReorderCall(FL.ReorderableList.DropableCheck);
                         FL.ReorderableList.List.OnElementGrabbed.AddListener(ReorderablePick);
                         FL.ReorderableList.List.OnElementAdded.AddListener(ReorderableDrop);
-                        FL.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FL.ListParent, Lv, (byte)j));
-                        FL.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(Lv, (byte)j));
+                        FL.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FL.ListParent, Manager.BoardButton, Lv, (byte)j));
+                        FL.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(Manager.BoardButton, Lv, (byte)j));
 
-                        if(TargetBoardData.CategoryType == Board.Ctgr.Level)
-                            FL.Title.text = $"Floor {j+1}";
-                        else if(TargetBoardData.CategoryType == Board.Ctgr.Custom)
-                            FL.Title.text = LevelList[i].Floor[j].Name;
+                        FL.Title.text = (CurrentBoard.Board.CategoryType == Board.Ctgr.Level) ? $"Floor {j+1}" : LevelList[i].Floor[j].Name;
                         
                         foreach(ushort index in LevelList[i].Floor[j].Tracks) {
                             MainData.TrackInfo TrackData = SystemFileIO.GetTrackData(index);
@@ -245,33 +242,33 @@ public partial class BoardManager : MonoBehaviour
                             Count++;
                             
                         }
-
-                        FL.FilterCheckEmpty();
+                        
+                        FL.FilterCheckEmpty(isFilter);
+                        FL.SetEditMode(isEditing);
                         yield return null;
                     }
-                
-                    LDUI.FilterCheckEmpty();
+
+                    LDUI.FilterCheckEmpty(isFilter);
+                    LDUI.SetEditMode(isEditing);
                 }
                 break;
 
             case Manager.ViewMode.Grid:
                 for(int i = LevelList.Count-1; i >=0 ; i--) {
-                    if(LevelList[i].Floor.Sum((x) => (x.Tracks.Count)) == 0)
-                        continue;
-
                     GameObject LevelDiv = Instantiate(Manager.AchievementUI.LevelDivPrefab, Vector3.zero, Quaternion.identity, Manager.AchievementUI.ScrollViewport);
                     LevelDiv.transform.localScale = Vector3.one;
                     A_LevelDivider LDUI = LevelDiv.GetComponent<A_LevelDivider>();
                     byte Lv = LevelList[i].Lv;
                     LDUI.Title.text = $"Lv {Lv}";
                     FilterLevelEvent += new FilterCallback(LDUI.FilterCheckEmpty);
+                    BoardEditEvent += new BoardEditCall(LDUI.SetEditMode);
+                    LDUI.DeleteLevelButton.onClick.AddListener(() => OpenDeleteLevelModal(Manager.BoardButton, Lv));
+                    LDUI.NewFloorButton.onClick.AddListener(() => OpenAddFloorModal(LDUI.FloorParent, Manager.BoardButton, Lv));
 
                     for(int j = 0; j < Lv; j++)
                         LDUI.LvToggleParent.Toggles[j].isOn = true;
 
                     for(int j = (LevelList[i].Floor.Count - 1); j >= 0; j--) {
-                        if(LevelList[i].Floor[j].Tracks.Count == 0)
-                            continue;
                         GameObject Floor = Instantiate(Manager.AchievementUI.FloorGridPrefab, Vector3.zero, Quaternion.identity, LDUI.FloorParent);
                         Floor.transform.localScale = Vector3.one;
                         
@@ -283,8 +280,10 @@ public partial class BoardManager : MonoBehaviour
                         BoardReorderEvent += new BoardReorderCall(FG.ReorderableList.DropableCheck);
                         FG.ReorderableList.List.OnElementGrabbed.AddListener(ReorderablePick);
                         FG.ReorderableList.List.OnElementAdded.AddListener(ReorderableDrop);
+                        FG.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FG.GridParent, Manager.BoardButton, Lv, (byte)j));
+                        FG.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(Manager.BoardButton, Lv, (byte)j));
 
-                        FG.Title.text = $"Floor {j+1}";
+                        FG.Title.text = (CurrentBoard.Board.CategoryType == Board.Ctgr.Level) ? $"Floor {j+1}" : LevelList[i].Floor[j].Name;
 
                         foreach(ushort index in LevelList[i].Floor[j].Tracks) {
                             MainData.TrackInfo TrackData = SystemFileIO.GetTrackData(index);
@@ -318,11 +317,13 @@ public partial class BoardManager : MonoBehaviour
                             
                         }
                         
-                        FG.FilterCheckEmpty();
+                        FG.FilterCheckEmpty(isFilter);
+                        FG.SetEditMode(isEditing);
                         yield return null;
                     }
 
-                    LDUI.FilterCheckEmpty();
+                    LDUI.FilterCheckEmpty(isFilter);
+                    LDUI.SetEditMode(isEditing);
                 }
                 break;
         }

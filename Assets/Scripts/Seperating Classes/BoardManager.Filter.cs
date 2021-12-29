@@ -14,6 +14,7 @@ public partial class BoardManager : MonoBehaviour
 
     private bool _nm = true, _hd = true, _mx = true, _sc = true;
     private string search = "";
+    private bool isFilter = false;
 
     public static List<string> DLCs = new List<string>();
     public static void DLC(bool state, string abbr) {
@@ -32,6 +33,7 @@ public partial class BoardManager : MonoBehaviour
         }
     }
     private void ApplyFilter() {
+        isFilter = true;
         if(!string.IsNullOrWhiteSpace(search)) {
             var songs = 
                 (from s in SystemFileIO.MainData.SongTable
@@ -42,8 +44,8 @@ public partial class BoardManager : MonoBehaviour
                 Track.gameObject.SetActive(songs.Contains(Track.SongIndex) && DLCs.Contains(SystemFileIO.GetSongData(Track.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(Track.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("SC") && _sc)));
             }
 
-            FilterFloorEvent?.Invoke();
-            FilterLevelEvent?.Invoke();
+            FilterFloorEvent?.Invoke(isFilter);
+            FilterLevelEvent?.Invoke(isFilter);
 
             foreach(Transform t in Manager.AchievementUI.ScrollViewport) {
                 if(t.gameObject.activeInHierarchy) {
@@ -59,12 +61,14 @@ public partial class BoardManager : MonoBehaviour
         }
         else
         {
+            if(DLCs.Count == SystemFileIO.MainData.DLCList.Count) isFilter = false;
+
             foreach(var Track in AchievementTracks) {
                 Track.gameObject.SetActive( DLCs.Contains(SystemFileIO.GetSongData(Track.SongIndex).Ctgr) && ((SystemFileIO.GetTrackData(Track.Index).Diff.Equals("NM") && _nm) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("HD") && _hd) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("MX") && _mx) || (SystemFileIO.GetTrackData(Track.Index).Diff.Equals("SC") && _sc)) );
             }
 
-            FilterFloorEvent?.Invoke();
-            FilterLevelEvent?.Invoke();
+            FilterFloorEvent?.Invoke(isFilter);
+            FilterLevelEvent?.Invoke(isFilter);
 
             foreach(Transform t in Manager.AchievementUI.ScrollViewport) {
                 if(t.gameObject.activeInHierarchy) {
@@ -77,6 +81,8 @@ public partial class BoardManager : MonoBehaviour
                 }
             }
         }
+
+        print(isFilter);
     }
 
     public void FilterModal(bool state) {

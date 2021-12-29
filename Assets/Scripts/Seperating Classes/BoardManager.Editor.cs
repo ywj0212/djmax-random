@@ -45,6 +45,7 @@ public partial class BoardManager : MonoBehaviour
             isEditing = false;
             EditToggleImage.sprite = EditSprite;
             BoardEditEvent.Invoke(false);
+            UpdateStatistics();
             DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 0f, 0.6f).SetEase(Ease.InOutCirc);
             DOVirtual.DelayedCall(0.6f, () => DeleteTrackList.gameObject.SetActive(false));
         }
@@ -52,19 +53,21 @@ public partial class BoardManager : MonoBehaviour
     
     // * 콜백은 연결 해놓았음.
     // TODO: 모달 창 만들고, 뜨는 거 만들어서 적용하기...
-    public void OpenAddLevelModal(Transform parent) {
-        
+    // ! 레벨 추가 버튼 위치 못 찾음....
+    public void OpenAddLevelModal(Transform parent, Board.Button button) {
+        // ? 현재 목록에 존재하는 레벨은 제외!
     }
-    public void OpenDeleteLevelModal(byte lv) {
-        
+    public void OpenDeleteLevelModal(Board.Button button, byte lv) {
+        // ? 이건 그냥 경고창
     }
-    public void OpenAddFloorModal(Transform parent, byte lv) {
-
+    public void OpenAddFloorModal(Transform parent, Board.Button button, byte lv) {
+        // * 이거 보드 타입이 레벨이 아니면, 이름도 기입하게 해야하는데 어카지..
+        // * 또 이거 이름 수정할 수 있게 해줘야 할 거 아니야...
     }
-    public void OpenAddTrackToFloorModal(Transform parent, byte lv, byte floorIndex) {
-        
+    public void OpenAddTrackToFloorModal(Transform parent, Board.Button button, byte lv, byte floorIndex) {
+        // * 퀵 기입 코드 재활용
     }
-    public void OpenDeleteFloorModal(byte lv, byte floorIndex) {
-
+    public void OpenDeleteFloorModal(Board.Button button, byte lv, byte floorIndex) {
+        // ? 이건 그냥 경고창
     }
 }

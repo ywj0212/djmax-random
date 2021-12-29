@@ -20,8 +20,8 @@ public class A_LevelDivider : MonoBehaviour
         DeleteLevelButton.gameObject.SetActive(state);
         NewFloorButton.gameObject.SetActive(state);
     }
-    public void FilterCheckEmpty() {
-        gameObject.SetActive(FloorParent.ChildCountActive() != 0);
+    public void FilterCheckEmpty(bool isFilter) {
+        gameObject.SetActive(!isFilter || FloorParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {

@@ -21,8 +21,8 @@ public class A_FloorList : MonoBehaviour
         NewTrackButton.gameObject.SetActive(state);
         ReorderableList.SetState(state);
     }
-    public void FilterCheckEmpty() {
-        gameObject.SetActive(ListParent.ChildCountActive() != 0);
+    public void FilterCheckEmpty(bool isFilter) {
+        gameObject.SetActive(!isFilter || ListParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {
@@ -41,9 +41,7 @@ public class A_FloorList : MonoBehaviour
     }
     private IEnumerator RebuildLayout() {
         foreach(RectTransform t in ListParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
-        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)ListParent);
-        yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
         yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent);
@@ -53,5 +51,6 @@ public class A_FloorList : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent.parent);
         yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent.parent.parent);
+        yield break;
     }
 }
