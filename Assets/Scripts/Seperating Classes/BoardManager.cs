@@ -141,6 +141,15 @@ public partial class BoardManager : MonoBehaviour
     private event BoardEditCall BoardEditEvent;
     private event BoardReorderCall BoardReorderEvent;
     private Coroutine LoadingAchievement;
+    public void ClearBoard() {
+        AchievementTracks.Clear();
+        AchievementTrackIndexes.Clear();
+        FilterLevelEvent = null;
+        FilterFloorEvent = null;
+        BoardEditEvent = null;
+        BoardReorderEvent = null;
+        foreach(Transform t in Manager.AchievementUI.ScrollViewport) Destroy(t.gameObject);
+    }
     public void OpenAchievement() {
         if(LoadingAchievement != null)
             StopCoroutine(LoadingAchievement);
@@ -148,12 +157,10 @@ public partial class BoardManager : MonoBehaviour
     }
     public IEnumerator OpenAchievementRoutine() {
         int Count = 0;
-        AchievementTracks.Clear();
-        AchievementTrackIndexes.Clear();
-        FilterLevelEvent = null;
-        FilterFloorEvent = null;
-        BoardEditEvent = null;
-        BoardReorderEvent = null;
+        ClearBoard();
+
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
 
         Board TargetBoardData = CurrentBoard.Board;
         Board.ButtonData ButtonData = TargetBoardData.Buttons[(TargetBoardData.ButtonType == Board.Type.Seperated) ? ((int)Manager.BoardButton) : ((int)Board.Button.All)];
@@ -163,7 +170,6 @@ public partial class BoardManager : MonoBehaviour
         UpdateStatistics();
 
         List<Board.ButtonData.LvData> LevelList = ButtonData.Lv;
-        foreach(Transform t in Manager.AchievementUI.ScrollViewport) Destroy(t.gameObject);
         
         switch(Manager.BoardViewMode) {
             case Manager.ViewMode.List:

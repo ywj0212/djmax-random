@@ -13,7 +13,8 @@ public class ImageTweenDestroyer : MonoBehaviour
     }
     private void OnDestroy() {
         Tween?.Kill();
-        if(Image.sprite != null) {
+        
+        if(Image != null && Image.sprite != null) {
             if(Image.sprite.texture != null)
                 Destroy(Image.sprite.texture);
             Destroy(Image.sprite);

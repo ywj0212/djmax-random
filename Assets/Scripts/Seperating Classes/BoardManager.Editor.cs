@@ -35,19 +35,19 @@ public partial class BoardManager : MonoBehaviour
 
     public void SetEditMode(bool b) {
         if(b) {
-            isEditing = true;
             EditToggleImage.sprite = SaveSprite;
             BoardEditEvent.Invoke(true);
             DeleteTrackList.gameObject.SetActive(true);
             DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 1f, 0.6f).SetEase(Ease.InOutCirc);
+            isEditing = true;
         }
         else {
-            isEditing = false;
             EditToggleImage.sprite = EditSprite;
             BoardEditEvent.Invoke(false);
             UpdateStatistics();
             DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 0f, 0.6f).SetEase(Ease.InOutCirc);
             DOVirtual.DelayedCall(0.6f, () => DeleteTrackList.gameObject.SetActive(false));
+            isEditing = false;
         }
     }
     

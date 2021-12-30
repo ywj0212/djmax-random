@@ -11,6 +11,10 @@ public class A_ReorderableList : MonoBehaviour
 
     public void SetState(bool state) {
         List.enabled = state;
+
+        CanvasGroup[] CG = transform.GetComponentsInChildren<CanvasGroup>();
+        foreach(CanvasGroup C in CG)
+            C.blocksRaycasts = state;
     }
     public void DropableCheck(byte? Lv) {
         if(!Lv.HasValue) List.IsDropable = true;

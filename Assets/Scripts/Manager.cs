@@ -8,6 +8,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.Rendering;
 using DG.Tweening;
 using TMPro;
 using Mirix.DMRV;
@@ -141,13 +142,15 @@ public class Manager : Singleton<Manager>
     private CustomLadderMatch CustomLadderMatch;
     private RandomSelector RandomSelector;
     private void Start() {
-        DOTween.SetTweensCapacity(600, 100);
+        DOTween.SetTweensCapacity(800, 100);
         ToggleDelay = new WaitForSeconds(ToggleAllNoneDelay);
 
         BoardManager = GetComponent<BoardManager>();
         CustomLadderMatch = GetComponent<CustomLadderMatch>();
         RandomSelector = GetComponent<RandomSelector>();
 
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;        
         StartCoroutine(Init());
     }
 
@@ -234,12 +237,27 @@ public class Manager : Singleton<Manager>
 
     public void ChangeApplicationMode() {
         switch(AppState) {
-            case State.Achievements: AppState = State.Random;       OpenRandomSelector(true); break;
-            case State.Random:       AppState = State.Ladder;       OpenCustomLadder(true);   break;
-            case State.Ladder:       if(CustomLadderMatch.CustomLadderState != CustomLadderMatch.LadderState.Ready) return;
-                                     AppState = State.Achievements; OpenAchievement(true);    break;
+            case State.Achievements:
+                AppState = State.Random;
+                OpenRandomSelector(true);
+                BoardManager.ClearBoard();
+                break;
+            
+            case State.Random:
+                AppState = State.Ladder;
+                OpenCustomLadder(true);
+                break;
+            
+            case State.Ladder:
+                if(CustomLadderMatch.CustomLadderState != CustomLadderMatch.LadderState.Ready)
+                    return;
+                
+                AppState = State.Achievements; OpenAchievement(true);
+                break;
         }
 
+        Resources.UnloadUnusedAssets();
+        System.GC.Collect();
         TitleText.text = StateTitleString[(int)AppState];
         TitleStarShine.SetTrigger("Shine");
     }
@@ -303,7 +321,6 @@ public class Manager : Singleton<Manager>
             CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
             AchievementInfoPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
             AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
-            // PanelUpdate();
         }
         
         BoardManager.OpenAchievement();
