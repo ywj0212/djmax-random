@@ -85,6 +85,7 @@ public class Manager : Singleton<Manager>
         public Image             Category;
         public Image             Preview;
         public TMP_InputField    RateField;
+        public TMP_InputField    BreakField;
         public Color[]           IndicatorColor;
         public Sprite[]          IndicatorSprite;
         public ButtonAnimation[] Difficulty;
@@ -100,7 +101,17 @@ public class Manager : Singleton<Manager>
         public RectTransform     MaxComboBarChart;
         public RectTransform     ClearBarChart;
         [Space]
+        public Sprite            CreateSprite;
+        public Sprite            DeleteSprite;
+        [Space]
+        public Sprite[]          SpeedOptionSprite;
+        public Sprite[]          FeverOptionSprite;
+        public Sprite[]          FaderOptionSprite;
+        public Sprite[]          ChaosOptionSprite;
+        [Space]
+        public GameObject        GenerationScreen;
         public Transform         ScrollViewport;
+        public Canvas            BoardCanvas;
         public GameObject        LevelDivPrefab;
         public GameObject        FloorListPrefab;
         public GameObject        FloorGridPrefab;
@@ -121,7 +132,7 @@ public class Manager : Singleton<Manager>
         public GameObject       RoundTrackAllUsedPrefab;
     }
 #endregion
-
+    
     public enum State                           { Achievements, Random, Ladder }
     private readonly string[] StateTitleString  = { "Achievements", "Random Selector", "Custom Ladder" };
     public enum ViewMode                        { List, Grid }

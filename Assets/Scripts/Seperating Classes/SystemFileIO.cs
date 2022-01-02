@@ -17,6 +17,7 @@ using DG.Tweening;
 [Serializable] public class Achievement {
     public ushort Index;
     public float Rate;
+    public ushort Break;
     public enum State : sbyte { None = 0, Clear = 1, MaxCombo = 2, Perfect = 3 }
     public State Status;
 }
@@ -83,10 +84,23 @@ public class SystemFileIO : Singleton<SystemFileIO>
             achievement = new Achievement();
             AchievementData.achievements.Add(achievement);
             achievement.Index = index;
+            achievement.Break = 0;
             achievement.Status = Achievement.State.None;
         }
 
         achievement.Status = state;
+
+        SaveJson<AchievementData>(AchievementData, AchievementPath);
+    }
+    public static void SaveAchievementBreak(ushort index, ushort breaks) {
+        Achievement achievement = AchievementData.achievements.FirstOrDefault((x) => (x.Index == index));
+        if(achievement == null) {
+            achievement = new Achievement();
+            AchievementData.achievements.Add(achievement);
+            achievement.Index = index;
+            achievement.Status = Achievement.State.None;
+        }
+        achievement.Break = breaks;
 
         SaveJson<AchievementData>(AchievementData, AchievementPath);
     }
@@ -96,6 +110,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
             achievement = new Achievement();
             AchievementData.achievements.Add(achievement);
             achievement.Index = index;
+            achievement.Break = 0;
             achievement.Status = Achievement.State.None;
         }
 
@@ -109,6 +124,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
             achievement = new Achievement();
             AchievementData.achievements.Add(achievement);
             achievement.Index = index;
+            achievement.Break = 0;
             achievement.Status = Achievement.State.None;
             achievement.Rate = 0f;
         }

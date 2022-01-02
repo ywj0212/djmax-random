@@ -10,6 +10,7 @@ public class A_FloorGrid : MonoBehaviour
 {
     public TextMeshProUGUI Title;
     public Transform GridParent;
+    public Transform FoldingParent;
     public A_ReorderableList ReorderableList;
     
     [SerializeField] private Transform FoldIndicator;
@@ -28,7 +29,7 @@ public class A_FloorGrid : MonoBehaviour
 
     public void FoldToggle() {
         isFolded ^= true;
-        GridParent.gameObject.SetActive(!isFolded);
+        FoldingParent.gameObject.SetActive(!isFolded);
 
         if(isFolded)
             FoldIndicator.DORotate(new Vector3(0, 0, 180), 0.3f).SetEase(Ease.InOutCirc);

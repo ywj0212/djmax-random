@@ -12,14 +12,11 @@ using Mirix.DMRV;
 public partial class BoardManager : MonoBehaviour
 {
     [Header("Main")]
+    [SerializeField] private ushort             ProgramVersion;
     [SerializeField] private TMP_Dropdown       BoardDropdown;
     [SerializeField] private TextMeshProUGUI    DropdownLabel;
     [Space]
     [SerializeField] private GameObject         ModalBackdrop;
-    [SerializeField] private GameObject         ModalDuplicateName;
-    [SerializeField] private GameObject         ModalNewBoard;
-    [SerializeField] private GameObject         ModalDeletionConfirm;
-    [Space]
     [SerializeField] private GameObject         ModalQuickRecord;
     [SerializeField] private Transform          QuickRecordSearchListParent;
     [SerializeField] private TMP_InputField     QuickRecordSearchField;
@@ -32,16 +29,6 @@ public partial class BoardManager : MonoBehaviour
             BoardDropdown.options.Add(new TMP_Dropdown.OptionData() { text = b.Name } );
     }
 
-    public void ShowBoard(int index) {
-
-    }
-    public void DuplicateBoard(int index) {
-
-    }
-    public void DeleteBoard(int index) {
-
-    }
-
     private BoardInfo CurrentBoard;
     public void SetInitBoard() {
         CurrentBoard = SystemFileIO.Boards[0];
@@ -49,12 +36,6 @@ public partial class BoardManager : MonoBehaviour
     public void ChangeBoard(int i) {
         CurrentBoard = SystemFileIO.Boards[i];
         OpenAchievement();
-    }
-    public void ExportBoard() {
-
-    }
-    public void ImportBoard() {
-
     }
 
     public void OpenQuickRecordModal() {
@@ -170,7 +151,10 @@ public partial class BoardManager : MonoBehaviour
         UpdateStatistics();
 
         List<Board.ButtonData.LvData> LevelList = ButtonData.Lv;
-        
+        Manager.AchievementUI.ScrollViewport.gameObject.SetActive(false);
+        Manager.AchievementUI.GenerationScreen.SetActive(true);
+        Manager.AchievementUI.BoardCanvas.enabled = false;
+
         switch(Manager.BoardViewMode) {
             case Manager.ViewMode.List:
                 for(int i = LevelList.Count-1; i >=0 ; i--) {
@@ -200,6 +184,7 @@ public partial class BoardManager : MonoBehaviour
                         Floor.transform.localScale = Vector3.one;
 
                         A_FloorList FL = Floor.GetComponent<A_FloorList>();
+                        FL.Init(LevelList[i].Floor[j]);
                         FL.ReorderableList.Lv = Lv;
                         FL.ReorderableList.Floor = (byte)j;
                         FilterFloorEvent += new FilterCallback(FL.FilterCheckEmpty);
@@ -334,7 +319,29 @@ public partial class BoardManager : MonoBehaviour
                 break;
         }
 
+        Manager.AchievementUI.ScrollViewport.gameObject.SetActive(true);
+
+        BoardCriteriaPanel.SetActive(TargetBoardData.Criteria != null);
+        BoardCriteriaPP.gameObject.SetActive(TargetBoardData.Criteria != null && TargetBoardData.Criteria.Crit == Board.CriteriaData.CritType.Perfect);
+        BoardCriteriaMC.gameObject.SetActive(TargetBoardData.Criteria != null && TargetBoardData.Criteria.Crit == Board.CriteriaData.CritType.MaxCombo);
+        BoardCriteriaRate.gameObject.SetActive(TargetBoardData.Criteria?.Rate != null);
+
+        if(TargetBoardData.Criteria != null) {
+            BoardCriteriaPP.isOn = TargetBoardData.Criteria.Crit == Board.CriteriaData.CritType.Perfect;
+            BoardCriteriaMC.isOn = TargetBoardData.Criteria.Crit == Board.CriteriaData.CritType.MaxCombo;
+
+            if(TargetBoardData.Criteria.Rate.HasValue)
+                BoardCriteriaRate.text = string.Format("{0:0.00}", TargetBoardData.Criteria.Rate.Value);
+        }
+        
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.AchievementUI.ScrollViewport);
+        foreach(RectTransform RT in (RectTransform)Manager.AchievementUI.ScrollViewport)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(RT);
+        yield return null;
+        yield return null;
+        yield return null;
+        Manager.AchievementUI.GenerationScreen.SetActive(false);
+        Manager.AchievementUI.BoardCanvas.enabled = true;
     }
 
     private Tween AchievementButtonSpriteSwap;
@@ -402,7 +409,10 @@ public partial class BoardManager : MonoBehaviour
         Manager.BGPrev.sprite = Manager.BG.sprite;
         SystemFileIO.GetLoadingSprite(Manager.BG, TrackData.SongIndex);
         Manager.AchievementUI.RateField.text = string.Format("{0:0.00}", AchievementData.Rate);
+        Manager.AchievementUI.BreakField.text = AchievementData.Break.ToString();
+
         PrevRate = AchievementData.Rate;
+        PrevBreak = AchievementData.Break;
         
         switch(TrackData.Diff) {
             case "NM": 
@@ -450,6 +460,7 @@ public partial class BoardManager : MonoBehaviour
         }
     }
     private float PrevRate;
+    private ushort PrevBreak;
     public void AchievementRateUpdate(string input) {
         if(float.TryParse(input, out float rate)) {
             Achievement achievement = SystemFileIO.GetAchievementSave(AchievementIndex);
@@ -461,35 +472,35 @@ public partial class BoardManager : MonoBehaviour
 
             if(rate <= 0.01f) {
                 SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.None);
-                Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, -1);
-                if(AchievementIndicator != null)
-                    AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[(int)Achievement.State.None];
-                if(AchievementIndicatorIcon != null)
-                    AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[(int)Achievement.State.None];
+                SystemFileIO.SaveAchievementBreak(AchievementIndex, 0);
+                
+                SetToggle(Achievement.State.None);
+                SetIndicator(Achievement.State.None);
             }
             else if(rate >= 100f) {
                 SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.Perfect);
-                Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, (int)Achievement.State.Perfect - (int)Achievement.State.MaxCombo);
-                if(AchievementIndicator != null)
-                    AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[(int)Achievement.State.Perfect];
-                if(AchievementIndicatorIcon != null)
-                    AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[(int)Achievement.State.Perfect];
+                Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, 1);
+
+                SetToggle(Achievement.State.Perfect);
+                SetIndicator(Achievement.State.Perfect);
             }
             else if(achievement.Status == Achievement.State.Perfect) {
                 SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.MaxCombo);
-                Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, (int)Achievement.State.MaxCombo - (int)Achievement.State.MaxCombo);
-                if(AchievementIndicator != null)
-                    AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[(int)Achievement.State.MaxCombo];
-                if(AchievementIndicatorIcon != null)
-                    AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[(int)Achievement.State.MaxCombo];
+                Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, 0);
+
+                SetToggle(Achievement.State.MaxCombo);
+                SetIndicator(Achievement.State.MaxCombo);
             }
-            else {
+            else if(achievement.Status != Achievement.State.MaxCombo) {
                 SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.Clear);
                 Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, -1);
-                if(AchievementIndicator != null)
-                    AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[(int)Achievement.State.Clear];
-                if(AchievementIndicatorIcon != null)
-                    AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[(int)Achievement.State.Clear];
+                
+                PrevBreak = (ushort)Mathf.Max(1, PrevBreak);
+                SystemFileIO.SaveAchievementBreak(AchievementIndex, PrevBreak);
+
+                Manager.AchievementUI.BreakField.text = PrevBreak.ToString();
+                SetToggle(Achievement.State.Clear);
+                SetIndicator(Achievement.State.Clear);
             }
         }
         else
@@ -497,37 +508,77 @@ public partial class BoardManager : MonoBehaviour
         
         UpdateStatistics();
     }
-    public void AchievementStateToggleUpdate() {
-        int index = Manager.GetSelectedToggleIndex(Manager.AchievementUI.StateToggleGroup) + 2 ?? 0;
+    public void AchievementBreakUpdate(string input) {
+        if(ushort.TryParse(input, out ushort breaks)) {
+            Achievement achievement = SystemFileIO.GetAchievementSave(AchievementIndex);
+            Manager.AchievementUI.BreakField.text = breaks.ToString();
+            PrevBreak = breaks;
 
-        if(index == (int)Achievement.State.Perfect) {
+            if(breaks == 0) {
+                SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.MaxCombo);
+                
+                SetToggle(Achievement.State.MaxCombo);
+                SetIndicator(Achievement.State.MaxCombo);
+            }
+            else if(PrevRate >= 0.01f) {
+                SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.Clear);
+
+                SetToggle(Achievement.State.Clear);
+                SetIndicator(Achievement.State.Clear);
+            }
+            else {
+                SystemFileIO.SaveAchievementState(AchievementIndex, Achievement.State.None);
+
+                SetToggle(Achievement.State.None);
+                SetIndicator(Achievement.State.None);
+            }
+
+            SystemFileIO.SaveAchievementBreak(AchievementIndex, breaks);
+        }
+        else
+            Manager.AchievementUI.BreakField.text = PrevBreak.ToString();
+        
+        UpdateStatistics();
+    }
+    public void AchievementStateToggleUpdate() {
+        Achievement.State state = (Achievement.State)(Manager.GetSelectedToggleIndex(Manager.AchievementUI.StateToggleGroup) + 2 ?? 0);
+
+        if(state == Achievement.State.Perfect) {
             PrevRate = 100f;
-            Manager.AchievementUI.RateField.text = string.Format("{0:0.00}", PrevRate);
+            PrevBreak = 0;
+            
             SetAchievementListRate(PrevRate);
-            SystemFileIO.SaveAchievementRate(AchievementIndex, PrevRate);
         }
         else {
             PrevRate = Mathf.Clamp(PrevRate, 0f, 99.99f);
-            Manager.AchievementUI.RateField.text = string.Format("{0:0.00}", PrevRate);
-            
-            if(index == 0) {
+            if(state == Achievement.State.MaxCombo)
+                PrevBreak = 0;
+                        
+            if(state == Achievement.State.None) {
                 if(PrevRate <= 0.01f)
-                    index = (int)Achievement.State.None;
+                    state = Achievement.State.None;
                 else
-                    index = (int)Achievement.State.Clear;
+                    state = Achievement.State.Clear;
             }
             
             SetAchievementListRate(PrevRate);
-            SystemFileIO.SaveAchievementRate(AchievementIndex, PrevRate);
         }
 
-        SystemFileIO.SaveAchievementState(AchievementIndex, (Achievement.State)index);
-        if(AchievementIndicator != null)
-            AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[index];
-        if(AchievementIndicatorIcon != null)
-            AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[index];
+        SystemFileIO.SaveAchievementRate(AchievementIndex, PrevRate);
+        SystemFileIO.SaveAchievementBreak(AchievementIndex, PrevBreak);
+        SystemFileIO.SaveAchievementState(AchievementIndex, state);
+        Manager.AchievementUI.RateField.text = string.Format("{0:0.00}", PrevRate);
+        Manager.AchievementUI.BreakField.text = PrevBreak.ToString();
+        SetIndicator(state);
         
         UpdateStatistics();
+    }
+    private void SetToggle(Achievement.State state) {
+        Manager.ApplySelectionToToggleGroup(Manager.AchievementUI.StateToggleGroup, (int)state - 2);
+    }
+    private void SetIndicator(Achievement.State state) {
+        if(AchievementIndicator != null) AchievementIndicator.color = Manager.AchievementUI.IndicatorColor[(int)state];
+        if(AchievementIndicatorIcon != null) AchievementIndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[(int)state];
     }
     private void SetAchievementListRate(float rate) {
         if(AchievementRate != null)

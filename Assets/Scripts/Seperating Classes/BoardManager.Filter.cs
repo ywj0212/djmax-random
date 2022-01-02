@@ -81,8 +81,6 @@ public partial class BoardManager : MonoBehaviour
                 }
             }
         }
-
-        print(isFilter);
     }
 
     public void FilterModal(bool state) {
