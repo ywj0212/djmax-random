@@ -26,13 +26,15 @@ public partial class BoardManager : MonoBehaviour
     [SerializeField] private Toggle                 BoardCriteriaMC;
     [SerializeField] private TMP_InputField         BoardCriteriaRate;
     [Space]
-    [SerializeField] private GameObject             NewTrackModal;
+    [SerializeField] private GameObject             ModalBackDrop;
+    [SerializeField] private GameObject             ModalNewTrack;
     [SerializeField] private GameObject             ModalDuplicateName;
     [SerializeField] private GameObject             ModalNewBoard;
     [SerializeField] private GameObject             ModalDeletionConfirm;
     [SerializeField] private Button                 DeletionConfirmButton;
-    [SerializeField] private GameObject             NewLevelModal;
-    [SerializeField] private TMP_Dropdown           LevelDropdown;
+    [SerializeField] private GameObject             ModalNewLevel;
+    [SerializeField] private TMP_Dropdown           NewLevelDropdown;
+    [SerializeField] private Button                 NewLevelButton;
     [Space]
     [SerializeField] private RectTransform          ImageExportCanvasRect;
     [SerializeField] private Camera                 ImageExportRenderCamera;
@@ -167,16 +169,21 @@ public partial class BoardManager : MonoBehaviour
         CurrentBoard.Board.Criteria.Crit = state;
     }
     
-    // TODO 여기 밑에서 부터 구현할거 산더미....
-    // * 콜백은 연결 해놓았음.
-    // TODO: 모달 창 만들고, 뜨는 거 만들어서 적용하기...
-    // ! 레벨 추가 버튼 위치 못 찾음....
-    public void OpenAddLevelModal(Transform parent, Board.Button button) {
-        // ? 현재 목록에 존재하는 레벨은 제외!
-        // CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv[i].Lv
+    // TODO : 여기 밑에서 부터 구현할거 산더미....
+    public void OpenAddLevelModal() {
+        ModalBackDrop.SetActive(true);
+        NewLevelDropdown.ClearOptions();
+        
+        List<string> Options = new List<string>(15);
+        for(byte i = 1; i <= 15; i++)
+            if(CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.FindAll(l => l.Lv == i).Count <= 0)
+                Options.Add(i.ToString());
+
+        NewLevelDropdown.AddOptions(Options);
+        NewLevelButton.onClick.AddListener(() => AddLevel());
     }
     public void AddLevel() {
-
+        
     }
 
     public void OpenAddFloorModal(Transform parent, Board.Button button, byte lv) {

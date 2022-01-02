@@ -2693,7 +2693,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1961743200}
   m_HandleRect: {fileID: 1961743199}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11283,7 +11283,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -50062,7 +50062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d95f8694238d54d8c47ac15a99edaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProgramVersion: 0
+  ProgramVersion: 6
   BoardDropdown: {fileID: 386091320}
   DropdownLabel: {fileID: 958194001}
   ModalBackdrop: {fileID: 1714690964}
@@ -50081,13 +50081,15 @@ MonoBehaviour:
   BoardCriteriaPP: {fileID: 393346646}
   BoardCriteriaMC: {fileID: 1164246290}
   BoardCriteriaRate: {fileID: 705335891}
-  NewTrackModal: {fileID: 0}
+  ModalBackDrop: {fileID: 1714690964}
+  ModalNewTrack: {fileID: 0}
   ModalDuplicateName: {fileID: 876513275}
   ModalNewBoard: {fileID: 2106617921}
   ModalDeletionConfirm: {fileID: 703623605}
   DeletionConfirmButton: {fileID: 1088639596}
-  NewLevelModal: {fileID: 1251090619}
-  LevelDropdown: {fileID: 1434667973}
+  ModalNewLevel: {fileID: 1251090619}
+  NewLevelDropdown: {fileID: 1434667973}
+  NewLevelButton: {fileID: 1722727675}
   ImageExportCanvasRect: {fileID: 7830435}
   ImageExportRenderCamera: {fileID: 1484441409}
   Test: {fileID: 8400000, guid: 71c35ad3fee674e4bb41785c6fcf56cf, type: 2}
