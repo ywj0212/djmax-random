@@ -139,12 +139,10 @@ public class SystemFileIO : Singleton<SystemFileIO>
         return MainData.SongTable[index];
     }
     public static string GetCategoryFullName(string abbr) {
-        try {
+        if(MainData.CategoryAbbr.ContainsKey(abbr))
             return MainData.CategoryAbbr[abbr];
-        }
-        catch {
+        else
             return "COLLABORATION";
-        }
     }
     public static Sprite GetDifficultySprite(string button, string difficulty) {
         return Resources.Load<Sprite>(inst.DifficultyResourcePath + button + difficulty) ?? Resources.Load<Sprite>(inst.DifficultyResourcePath + "4BNM");
@@ -195,10 +193,11 @@ public class SystemFileIO : Singleton<SystemFileIO>
                 yield break;
 
             target.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
-            Tween tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
             ImageTweenDestroyer ITD = target.GetComponent<ImageTweenDestroyer>();
+            Tween tw = null;
             ITD.Tween = tw;
             ITD.Image = target;
+            tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
         }
     }
 

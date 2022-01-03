@@ -1,8 +1,9 @@
+using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UI.Extensions;
 using Mirix.DMRV;
 using DG.Tweening;
 using TMPro;
@@ -11,55 +12,55 @@ using Ookii.Dialogs;
 
 public partial class BoardManager : MonoBehaviour
 {
+#region Inspector
     [Header("Editor")]
-    [SerializeField] private UnityEngine.UI.Image   EditToggleImage;
-    [SerializeField] private Sprite                 EditSprite;
-    [SerializeField] private Sprite                 SaveSprite;
-    [SerializeField] private CanvasGroup            DeleteTrackList;
-    [SerializeField] private Button                 AddLevelButton;
+    [SerializeField] private Image          EditToggleImage;
+    [SerializeField] private Sprite         EditSprite;
+    [SerializeField] private Sprite         SaveSprite;
+    [SerializeField] private CanvasGroup    DeleteTrackList;
+    [SerializeField] private Button         AddLevelButton;
     [Space]
-    [SerializeField] private GameObject             BoardCriteriaPanel;
-    [SerializeField] private Toggle                 BoardCriteriaToggle;
-    [SerializeField] private Image                  BoardCriteriaToggleImage;
-    [SerializeField] private ToggleGroup            BoardCriteriaToggleGroup;
-    [SerializeField] private Toggle                 BoardCriteriaPP;
-    [SerializeField] private Toggle                 BoardCriteriaMC;
-    [SerializeField] private TMP_InputField         BoardCriteriaRate;
+    [SerializeField] private GameObject     BoardCriteriaPanel;
+    [SerializeField] private Toggle         BoardCriteriaToggle;
+    [SerializeField] private Image          BoardCriteriaToggleImage;
+    [SerializeField] private ToggleGroup    BoardCriteriaToggleGroup;
+    [SerializeField] private Toggle         BoardCriteriaPP;
+    [SerializeField] private Toggle         BoardCriteriaMC;
+    [SerializeField] private TMP_InputField BoardCriteriaRate;
     [Space]
-    [SerializeField] private GameObject             ModalBackDrop;
-    [SerializeField] private GameObject             ModalNewTrack;
-    [SerializeField] private GameObject             ModalDuplicateName;
-    [SerializeField] private GameObject             ModalNewBoard;
-    [SerializeField] private GameObject             ModalDeletionConfirm;
-    [SerializeField] private Button                 DeletionConfirmButton;
-    [SerializeField] private GameObject             ModalNewLevel;
-    [SerializeField] private TMP_Dropdown           NewLevelDropdown;
-    [SerializeField] private Button                 NewLevelButton;
-    [Space]
+    [SerializeField] private GameObject     ModalBackDrop;
+    [SerializeField] private GameObject     ModalDuplicateName;
+    [SerializeField] private GameObject     ModalNewBoard;
+    [SerializeField] private GameObject     ModalDeletionConfirm;
+    [SerializeField] private Button         DeletionConfirmButton;
+    [SerializeField] private GameObject     ModalNewLevel;
+    [SerializeField] private TMP_Dropdown   NewLevelDropdown;
+    [SerializeField] private GameObject     ModalNewTrack;
+    [SerializeField] private Transform      NewTrackSearchListParent;
+    [SerializeField] private TMP_InputField NewTrackSearchFieid;
+#endregion
+    [Space] // ! TESTING
     [SerializeField] private RectTransform          ImageExportCanvasRect;
     [SerializeField] private Camera                 ImageExportRenderCamera;
     [SerializeField] private RenderTexture Test;
     private bool isEditing = false;
 
-    public void ShowBoard(int index) {
+    public void ShowBoard(int index) { // TODO
 
     }
-    public void DuplicateBoard(int index) {
+    public void DuplicateBoard(int index) { // TODO
 
     }
-    public void DeleteBoard(int index) {
+    public void DeleteBoard(int index) { // TODO
 
     }
-    public void ExportBoard() {
+    public void ExportBoard() { // TODO
 
     }
-    public void ImportBoard() {
+    public void ImportBoard() { // TODO
 
     }
 
-    private void Start() {
-
-    }
     public IEnumerator ExportBoardImage() { // TODO 동적 생성 체크
         // int height = Mathf.CeilToInt(ImageExportCanvasRect.sizeDelta.y);
         // RenderTexture Render = new RenderTexture(850, height, 16, RenderTextureFormat.ARGB32);
@@ -89,18 +90,18 @@ public partial class BoardManager : MonoBehaviour
         }
     }
 
-    public void ReorderablePick(ReorderableList.ReorderableListEventStruct e) {
+    public void ReorderablePick(UnityEngine.UI.Extensions.ReorderableList.ReorderableListEventStruct e) {
         A_ReorderableList RD = e.FromList.GetComponent<A_ReorderableList>();
         if(CurrentBoard.Board.CategoryType == Board.Ctgr.Custom)
-            BoardReorderEvent.Invoke(null);
+            BoardReorderEvent?.Invoke(null);
         else
-            BoardReorderEvent.Invoke(RD.Lv);
+            BoardReorderEvent?.Invoke(RD.Lv);
 
         CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.Find(l => l.Lv == RD.Lv).Floor[RD.Floor].Tracks.RemoveAt(e.FromIndex);
     }
-    public void ReorderableDrop(ReorderableList.ReorderableListEventStruct e) {
+    public void ReorderableDrop(UnityEngine.UI.Extensions.ReorderableList.ReorderableListEventStruct e) {
         A_ReorderableList RD = e.ToList.GetComponent<A_ReorderableList>();
-        BoardReorderEvent.Invoke(null);
+        BoardReorderEvent?.Invoke(null);
 
         ushort Index = e.DroppedObject.GetComponent<BoardTrack>().Index;
         CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.Find(l => l.Lv == RD.Lv).Floor[RD.Floor].Tracks.Insert(e.ToIndex, Index);
@@ -121,8 +122,8 @@ public partial class BoardManager : MonoBehaviour
             DOVirtual.DelayedCall(0.6f, () => DeleteTrackList.gameObject.SetActive(false));
             UpdateStatistics();
         }
-        BoardEditEvent.Invoke(b);
-        AddLevelButton.gameObject.SetActive(b);
+        BoardEditEvent?.Invoke(b);
+        AddLevelButton.gameObject.SetActive(b && CurrentBoard.Board.CategoryType == Board.Ctgr.Level);
         isEditing = b;
         BoardCriteriaPanel.SetActive(b || CurrentBoard.Board.Criteria != null);
         BoardCriteriaPP.gameObject.SetActive(CurrentBoard.Board.Criteria != null && (b || CurrentBoard.Board.Criteria.Crit == Board.CriteriaData.CritType.Perfect));
@@ -169,9 +170,9 @@ public partial class BoardManager : MonoBehaviour
         CurrentBoard.Board.Criteria.Crit = state;
     }
     
-    // TODO : 여기 밑에서 부터 구현할거 산더미....
     public void OpenAddLevelModal() {
         ModalBackDrop.SetActive(true);
+        ModalNewLevel.SetActive(true);
         NewLevelDropdown.ClearOptions();
         
         List<string> Options = new List<string>(15);
@@ -180,45 +181,276 @@ public partial class BoardManager : MonoBehaviour
                 Options.Add(i.ToString());
 
         NewLevelDropdown.AddOptions(Options);
-        NewLevelButton.onClick.AddListener(() => AddLevel());
+    }
+    public void CloseAddLevelModal() {
+        ModalBackDrop.SetActive(false);
+        ModalNewLevel.SetActive(false);
     }
     public void AddLevel() {
-        
+        if(Byte.TryParse(NewLevelDropdown.options[NewLevelDropdown.value].text, out byte l)) {
+            var Lv = CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv;
+
+            if(Lv.FindAll(t => t.Lv == l).Count() > 0) return;
+            
+            Board.ButtonData.LvData lDat = new Board.ButtonData.LvData() { Lv = l };
+            Lv.Add(lDat);
+            Lv = Lv.OrderBy(t => t.Lv).ToList();
+
+            GameObject LevelDiv = Instantiate(Manager.AchievementUI.LevelDivPrefab, Vector3.zero, Quaternion.identity, Manager.AchievementUI.ScrollViewport);
+            LevelDiv.transform.localScale = Vector3.one;
+            A_LevelDivider LDUI = LevelDiv.GetComponent<A_LevelDivider>();
+            FilterLevelEvent += new FilterCallback(LDUI.FilterCheckEmpty);
+            BoardEditEvent += new BoardEditCall(LDUI.SetEditMode);
+            LDUI.Title.text = $"Lv {l}";
+            for(int j = 0; j < l; j++)
+                LDUI.LvToggleParent.Toggles[j].isOn = true;
+            LDUI.DeleteLevelButton.onClick.AddListener(() => OpenDeleteLevelModal(l));
+            LDUI.NewFloorButton.onClick.AddListener(() => AddFloor(LDUI.FloorParent, l));
+
+            LevelDiv.transform.SetSiblingIndex(Lv.Count - Lv.IndexOf(lDat) - 1);
+
+            LDUI.FilterCheckEmpty(isFilter);
+            LDUI.SetEditMode(isEditing);
+            
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)LevelDiv.transform);
+            foreach(RectTransform t in Manager.AchievementUI.ScrollViewport) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.AchievementUI.ScrollViewport);
+        }
+
+        CloseAddLevelModal();
     }
 
-    public void OpenAddFloorModal(Transform parent, Board.Button button, byte lv) {
-        // * 이거 보드 타입이 레벨이 아니면, 이름도 기입하게 해야하는데 어카지..
-        // * 또 이거 이름 수정할 수 있게 해줘야 할 거 아니야...
-    }
-    public void AddFloor() {
+    public void AddFloor(Transform parent, byte Lv) {
+        Board.ButtonData.LvData.FloorData fDat = new Board.ButtonData.LvData.FloorData() { Tracks = new List<ushort>() };
 
+        var LvData = CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.First(l => l.Lv == Lv);
+        byte index = (byte)(LvData.Floor.Count);
+        LvData.Floor.Add(fDat);
+
+        switch(Manager.BoardViewMode) {
+            case Manager.ViewMode.List:
+                GameObject FloorList = Instantiate(Manager.AchievementUI.FloorListPrefab, Vector3.zero, Quaternion.identity, parent);
+                FloorList.transform.localScale = Vector3.one;
+                FloorList.transform.SetSiblingIndex(0);
+
+                A_FloorList FL = FloorList.GetComponent<A_FloorList>();
+                FL.Init(fDat);
+                FL.ReorderableList.Lv = Lv;
+                FL.ReorderableList.Floor = index;
+                FilterFloorEvent += new FilterCallback(FL.FilterCheckEmpty);
+                BoardEditEvent += new BoardEditCall(FL.SetEditMode);
+                BoardReorderEvent += new BoardReorderCall(FL.ReorderableList.DropableCheck);
+                FL.ReorderableList.List.OnElementGrabbed.AddListener(ReorderablePick);
+                FL.ReorderableList.List.OnElementAdded.AddListener(ReorderableDrop);
+                FL.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FL.ListParent, Lv, index));
+                FL.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(parent, Lv, index));
+
+                FL.Title.text = (CurrentBoard.Board.CategoryType == Board.Ctgr.Level) ? $"Floor {index +1}" : fDat.Name;
+
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)FloorList.transform);
+                break;
+            
+            case Manager.ViewMode.Grid:
+                GameObject FloorGrid = Instantiate(Manager.AchievementUI.FloorGridPrefab, Vector3.zero, Quaternion.identity, parent);
+                FloorGrid.transform.localScale = Vector3.one;
+                FloorGrid.transform.SetSiblingIndex(0);
+                
+                A_FloorGrid FG = FloorGrid.GetComponent<A_FloorGrid>();
+                FG.ReorderableList.Lv = Lv;
+                FG.ReorderableList.Floor = index;
+                FilterFloorEvent += new FilterCallback(FG.FilterCheckEmpty);
+                BoardEditEvent += new BoardEditCall(FG.SetEditMode);
+                BoardReorderEvent += new BoardReorderCall(FG.ReorderableList.DropableCheck);
+                FG.ReorderableList.List.OnElementGrabbed.AddListener(ReorderablePick);
+                FG.ReorderableList.List.OnElementAdded.AddListener(ReorderableDrop);
+                FG.NewTrackButton.onClick.AddListener(() => OpenAddTrackToFloorModal(FG.GridParent, Lv, index));
+                FG.DeleteFloorButton.onClick.AddListener(() => OpenDeleteFloorModal(parent, Lv, index));
+
+                FG.Title.text = (CurrentBoard.Board.CategoryType == Board.Ctgr.Level) ? $"Floor {index +1}" : fDat.Name;
+
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)FloorGrid.transform);
+                break;
+        }
+
+        foreach(RectTransform t in parent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)parent);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)parent.parent);
+        foreach(RectTransform t in Manager.AchievementUI.ScrollViewport) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.AchievementUI.ScrollViewport);
     }
 
-    public void OpenAddTrackToFloorModal(Transform parent, Board.Button button, byte lv, byte floorIndex) {
-        // * 퀵 기입 코드 재활용
-    }
-    public void AddTrackToFloor() {
+    private Transform AddTrackParent;
+    private byte AddTrackLv;
+    private int AddTrackFloorIndex;
+    public void OpenAddTrackToFloorModal(Transform parent, byte Lv, int floorIndex) {
+        foreach(Transform t in NewTrackSearchListParent) Destroy(t.gameObject);
+        NewTrackSearchFieid.text = string.Empty;
 
+        AddTrackParent = parent;
+        AddTrackLv = Lv;
+        AddTrackFloorIndex = floorIndex;
+
+        ModalBackdrop.SetActive(true);
+        ModalNewTrack.SetActive(true);
+    }
+    public void CloseAddTrackToFloorModal() {
+        foreach(Transform t in NewTrackSearchListParent) Destroy(t.gameObject);
+
+        ModalBackdrop.SetActive(false);
+        ModalNewTrack.SetActive(false);
+    }
+    public void AddTrackSearch(string query) {
+        foreach(Transform t in NewTrackSearchListParent) Destroy(t.gameObject);
+        if(string.IsNullOrWhiteSpace(query)) return;
+        var tracks = SystemFileIO.MainData.TrackTable.Where(t => {
+            if(t.Value.Lv != AddTrackLv) return false;
+            if(CurrentBoard.Board.ButtonType == Board.Type.Seperated && t.Value.Bt != Manager.ButtonString[(int)Manager.BoardButton]) return false;
+
+            MainData.SongInfo SongData = SystemFileIO.GetSongData(t.Value.SongIndex);
+            string match = $"{SongData.Name} {t.Value.Bt} {t.Value.Diff}";
+            return match.Contains(query, StringComparison.OrdinalIgnoreCase);
+        }).Take(16);
+        foreach(var ti in tracks) {
+            ushort index = ti.Key;
+            MainData.TrackInfo TrackData = SystemFileIO.GetTrackData(index);
+            MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
+            Achievement AchievementData = SystemFileIO.GetAchievementSave(index);
+
+            GameObject TrackList = Instantiate(Manager.AchievementUI.ListPrefab, Vector3.zero, Quaternion.identity, NewTrackSearchListParent);
+            TrackList.transform.localScale = Vector3.one;
+            
+            A_FloorListTrack FLT = TrackList.GetComponent<A_FloorListTrack>();
+            FLT.Index = index;
+            FLT.SongIndex = TrackData.SongIndex;
+
+            SystemFileIO.GetThumbnailSprite(FLT.Thumbnail, TrackData.SongIndex);
+            FLT.Difficulty.sprite = SystemFileIO.GetAchievementDifficultySprite(TrackData.Diff);
+            FLT.Button.sprite = SystemFileIO.GetAchievementButtonSprite(TrackData.Bt);
+            
+            FLT.Indicator.color  = Manager.AchievementUI.IndicatorColor[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+            FLT.IndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+            FLT.Rate.text = AchievementData.Rate < 0.01 ? "-" : string.Format("{0:0.00}%", AchievementData.Rate);
+            
+            SystemFileIO.GetCategorySprite(FLT.Category, SongData.Ctgr);
+            FLT.Title.text = SongData.Name;
+            FLT.Composer.text = SongData.Cmps;
+            
+            FLT.OpenInfo.onClick.AddListener(() => {
+                AddTrackToFloor(index, AddTrackParent, AddTrackLv, AddTrackFloorIndex);
+                CloseAddTrackToFloorModal();
+            });
+        }
+    }
+    public void AddTrackToFloor(ushort index, Transform parent, byte Lv, int floorIndex) {
+        MainData.TrackInfo TrackData = SystemFileIO.GetTrackData(index);
+        MainData.SongInfo SongData = SystemFileIO.GetSongData(TrackData.SongIndex);
+        Achievement AchievementData = SystemFileIO.GetAchievementSave(index);
+
+        CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.First(l => l.Lv == Lv).Floor[floorIndex].Tracks.Add(index);
+
+        switch(Manager.BoardViewMode) {
+            case Manager.ViewMode.List:
+                GameObject TrackList = Instantiate(Manager.AchievementUI.ListPrefab, Vector3.zero, Quaternion.identity, parent);
+                TrackList.transform.localScale = Vector3.one;
+                
+                A_FloorListTrack FLT = TrackList.GetComponent<A_FloorListTrack>();
+                FLT.Index = index;
+                FLT.SongIndex = TrackData.SongIndex;
+
+                SystemFileIO.GetThumbnailSprite(FLT.Thumbnail, TrackData.SongIndex);
+                FLT.Difficulty.sprite = SystemFileIO.GetAchievementDifficultySprite(TrackData.Diff);
+                FLT.Button.sprite = SystemFileIO.GetAchievementButtonSprite(TrackData.Bt);
+                
+                FLT.Indicator.color  = Manager.AchievementUI.IndicatorColor[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+                FLT.IndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+                FLT.Rate.text = AchievementData.Rate < 0.01 ? "-" : string.Format("{0:0.00}%", AchievementData.Rate);
+                
+                SystemFileIO.GetCategorySprite(FLT.Category, SongData.Ctgr);
+                FLT.Title.text = SongData.Name;
+                FLT.Composer.text = SongData.Cmps;
+                
+                AchievementTracks.Add(FLT);
+
+                FLT.OpenInfo.onClick.AddListener(() => {OpenAchievementInfo(index);});
+
+                TrackList.SetActive(CheckFilter(FLT));
+
+                if(TrackData.Lv != Lv && CurrentBoard.Board.CategoryType == Board.Ctgr.Level)
+                    FLT.LevelMismatchAlert.SetActive(true);
+                
+                break;
+            
+            case Manager.ViewMode.Grid:
+                GameObject TrackGrid = Instantiate(Manager.AchievementUI.GridPrefab, Vector3.zero, Quaternion.identity, parent);
+                TrackGrid.transform.localScale = Vector3.one;
+
+                A_FloorGridTrack FGT = TrackGrid.GetComponent<A_FloorGridTrack>();
+                FGT.Index = index;
+                FGT.SongIndex = TrackData.SongIndex;
+
+                SystemFileIO.GetThumbnailSprite(FGT.Thumbnail, TrackData.SongIndex);
+                FGT.Difficulty.sprite = SystemFileIO.GetAchievementDifficultySprite(TrackData.Diff);
+                FGT.Button.sprite = SystemFileIO.GetAchievementButtonSprite(TrackData.Bt);
+
+                FGT.Indicator.color  = Manager.AchievementUI.IndicatorColor[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+                FGT.IndicatorIcon.sprite = Manager.AchievementUI.IndicatorSprite[Mathf.Clamp((int)AchievementData.Status, (int)Achievement.State.None, (int)Achievement.State.Perfect)];
+                FGT.Rate.text = AchievementData.Rate < 0.01 ? "-" : string.Format("{0:0.00}%", AchievementData.Rate);
+
+                AchievementTracks.Add(FGT);
+
+                FGT.OpenInfo.onClick.AddListener(() => {OpenAchievementInfo(index);});
+
+                TrackGrid.SetActive(CheckFilter(FGT));
+
+                if(TrackData.Lv != Lv && CurrentBoard.Board.CategoryType == Board.Ctgr.Level)
+                    FGT.LevelMismatchAlert.SetActive(true);
+
+                break;
+        }
+
+        CloseAddTrackToFloorModal();
+
+        foreach(RectTransform t in AddTrackParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)AddTrackParent);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)AddTrackParent.parent);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)AddTrackParent.parent.parent);
+        foreach(RectTransform t in Manager.AchievementUI.ScrollViewport) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.AchievementUI.ScrollViewport);
     }
 
-    public void OpenDeleteLevelModal(Board.Button button, byte lv) {
-        // ? 이건 그냥 경고창
+    public void OpenDeleteLevelModal(byte Lv) {
+        OpenDeletionAlert();
+        DeletionConfirmButton.onClick.AddListener(() => DeleteLevel(Lv));
     }
-    public void DeleteLevel() {
+    public void DeleteLevel(byte Lv) {
+        List <Board.ButtonData.LvData> LvData = CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv;
+        int index = LvData.FindIndex(l => l.Lv == Lv);
+        Destroy(Manager.AchievementUI.ScrollViewport.GetChild(LvData.Count - index - 1).gameObject);
+        LvData.RemoveAt(index);
 
+        CloseDeletionAlert();
     }
 
-    public void OpenDeleteFloorModal(Board.Button button, byte lv, byte floorIndex) {
-        // ? 이건 그냥 경고창
+    public void OpenDeleteFloorModal(Transform parent, byte Lv, int floorIndex) {
+        OpenDeletionAlert();
+        DeletionConfirmButton.onClick.AddListener(() => DeleteFloor(parent, Lv, floorIndex));
     }
-    public void DeleteFloor() {
+    public void DeleteFloor(Transform parent, byte Lv, int floorIndex) {
+        List<Board.ButtonData.LvData.FloorData> FloorData = CurrentBoard.Board.Buttons[(int)Manager.BoardButton].Lv.First(l => l.Lv == Lv).Floor;
+        Destroy(parent.GetChild(FloorData.Count - floorIndex - 1).gameObject);
+        FloorData.RemoveAt(floorIndex);
 
+        CloseDeletionAlert();
     }
 
     public void OpenDeletionAlert() {
+        DeletionConfirmButton.onClick.RemoveAllListeners();
 
+        ModalBackdrop.SetActive(true);
+        ModalDeletionConfirm.SetActive(true);
     }
     public void CloseDeletionAlert() {
-
+        ModalBackdrop.SetActive(false);
+        ModalDeletionConfirm.SetActive(false);
     }
 }

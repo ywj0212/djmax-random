@@ -137,7 +137,7 @@ public class Manager : Singleton<Manager>
     private readonly string[] StateTitleString  = { "Achievements", "Random Selector", "Custom Ladder" };
     public enum ViewMode                        { List, Grid }
 
-    private readonly string[] ButtonString      = { "4B", "5B", "6B", "8B" };
+    public static readonly string[] ButtonString      = { "4B", "5B", "6B", "8B" };
     public static State AppState                = State.Achievements;
     public static ViewMode BoardViewMode        = ViewMode.List;
     public static Board.Button BoardButton      = Board.Button._4B;
