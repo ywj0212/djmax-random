@@ -18,6 +18,10 @@ public class A_FloorGrid : MonoBehaviour
     public Button NewTrackButton;
     private bool isFolded = false;
 
+    public void OnAchievementUpdate(ushort index) {
+        
+    }
+
     public void SetEditMode(bool state) {
         DeleteFloorButton.gameObject.SetActive(state);
         NewTrackButton.gameObject.SetActive(state);

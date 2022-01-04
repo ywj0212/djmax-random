@@ -52,6 +52,9 @@ public class A_FloorList : MonoBehaviour
         DataReference = reference;
         UpdateQualificationPanel();
     }
+    public void OnAchievementUpdate(ushort index) {
+        if(DataReference.Tracks.Contains(index)) UpdateTierCurrentValue();
+    }
     private void UpdateQualificationPanel() {
         if(DataReference.Qualification == null) {
             QualificationField.SetActive(false);
@@ -120,9 +123,13 @@ public class A_FloorList : MonoBehaviour
 
             TierDeleteButton[i].gameObject.SetActive(isEditing);
         }
+        UpdateTierCurrentValue();
 
         if(gameObject.activeInHierarchy)
             StartCoroutine(RebuildLayout(true));
+    }
+    private void UpdateTierCurrentValue() {
+        
     }
     public void SetPlayOption(bool state) {
         if(state) {
