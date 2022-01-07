@@ -17,8 +17,8 @@ public class AchievementGradientAnimation : MonoBehaviour
 
         seq = DOTween.Sequence()
         .SetAutoKill(false)
-        .Append(maskRect.DOLocalMove(new Vector2(dist, 0), 1f).SetEase(Ease.InOutCirc))
-        .Join(onRect.DOLocalMove(new Vector2(-dist / 1.414f, -dist / 1.414f), 1f).SetEase(Ease.InOutCirc))
+        .Append(maskRect.DOLocalMove(new Vector2(dist, 0), 1f))
+        .Join(onRect.DOLocalMove(new Vector2(-dist / 1.414f, -dist / 1.414f), 1f))
         .OnStart(() => {
             maskRect.anchoredPosition = new Vector2(-dist, 0);
             onRect.anchoredPosition = new Vector2(dist / 1.414f, dist / 1.414f);

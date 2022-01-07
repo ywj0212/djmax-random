@@ -18,8 +18,8 @@ public class GradientAnimation : MonoBehaviour
 
         seq = DOTween.Sequence()
         .SetAutoKill(false)
-        .Append(maskRect.DOLocalMove(new Vector2(dist, 0), 1f).SetEase(Ease.InOutCirc))
-        .Join(onRect.DOLocalMove(new Vector2(-dist / 1.414f, -dist / 1.414f), 1f).SetEase(Ease.InOutCirc))
+        .Append(maskRect.DOLocalMove(new Vector2(dist, 0), 1f))
+        .Join(onRect.DOLocalMove(new Vector2(-dist / 1.414f, -dist / 1.414f), 1f))
         .InsertCallback(0.5f, () => { enabledImage.DOFade(1, 0f); })
         .OnStart(() => {
             maskRect.anchoredPosition = new Vector2(-dist, 0);

@@ -11,10 +11,10 @@ using Mirix.DMRV;
 
 public class FileDialogIO : MonoBehaviour
 {
-    private VistaOpenFileDialog OpenFileDialog = new VistaOpenFileDialog();
-    private VistaSaveFileDialog SaveFileDialog = new VistaSaveFileDialog();
+    private static VistaOpenFileDialog OpenFileDialog = new VistaOpenFileDialog();
+    private static VistaSaveFileDialog SaveFileDialog = new VistaSaveFileDialog();
 
-    private string GetOpenFilePath() {
+    private static string GetBoardOpenFilePath() {
         OpenFileDialog.Title = "Import Board File";
         OpenFileDialog.Filter = "DJMAX Data File |*.dmrvbd";
         OpenFileDialog.Multiselect = false;
@@ -26,9 +26,24 @@ public class FileDialogIO : MonoBehaviour
         else
             return null;
     }
-    private string GetSaveFilePath() {
+    private static string GetBoardSaveFilePath() {
         SaveFileDialog.Title = "Export Board File";
         SaveFileDialog.Filter = "DJMAX Data File |*.dmrvbd";
+        SaveFileDialog.DefaultExt = "dmrvbd";
+        SaveFileDialog.AddExtension = true;
+        
+        var Result = SaveFileDialog.ShowDialog();
+        if(Result == System.Windows.Forms.DialogResult.OK) {
+            return SaveFileDialog.FileName;
+        }
+        else
+            return null;
+    }
+    private static string GetImageSaveFilePath() {
+        SaveFileDialog.Title = "Export Board Image File";
+        SaveFileDialog.DefaultExt = "png";
+        SaveFileDialog.Filter = "PNG Image |*.png";
+        SaveFileDialog.AddExtension = true;
         
         var Result = SaveFileDialog.ShowDialog();
         if(Result == System.Windows.Forms.DialogResult.OK) {
@@ -38,8 +53,8 @@ public class FileDialogIO : MonoBehaviour
             return null;
     }
 
-    public void ExportBoardData(BoardInfo board) {
-        string path = GetSaveFilePath();
+    public static void ExportBoardData(BoardInfo board) {
+        string path = GetBoardSaveFilePath();
 
         if(path == null) {
             throw new System.NullReferenceException();
@@ -48,19 +63,17 @@ public class FileDialogIO : MonoBehaviour
         BinaryFormatter BF = new BinaryFormatter();
         BF.Serialize(File.Create(path), board);
     }
-    public BoardInfo ImportBoardData() {
-        string path = GetOpenFilePath();
+    public static BoardInfo ImportBoardData() {
+        string path = GetBoardOpenFilePath();
 
         if(path == null) {
             throw new System.NullReferenceException();
         }
 
-        // TODO: 보드 명 입력 루틴 추가 필요
-
         BinaryFormatter BF = new BinaryFormatter();
         return (BoardInfo)BF.Deserialize(new FileStream(path, FileMode.Open));
     }
-    public void SavePng(string path, Texture2D texture2D) {
+    public static void SavePNG(Texture2D texture2D) {
 
     }
 }

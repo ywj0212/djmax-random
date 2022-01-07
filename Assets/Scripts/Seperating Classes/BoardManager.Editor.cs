@@ -42,6 +42,7 @@ public partial class BoardManager : MonoBehaviour
     [SerializeField] private GameObject     ModalNewTrack;
     [SerializeField] private Transform      NewTrackSearchListParent;
     [SerializeField] private TMP_InputField NewTrackSearchFieid;
+    [SerializeField] private GameObject     ModalBoardControl;
 #endregion
     [Space] // ! TESTING
     [SerializeField] private RectTransform          ImageExportCanvasRect;
@@ -49,20 +50,30 @@ public partial class BoardManager : MonoBehaviour
     [SerializeField] private RenderTexture Test;
     private bool isEditing = false;
 
-    public void ShowBoard(int index) { // TODO
+    public void BoardControlModal(bool state) {
+        ModalBoardControl.SetActive(state);
+    }
+    public void ShowBoard(int index) {
+        CurrentBoard = SystemFileIO.Boards[index];
+
+        if(CurrentBoard.Board.ButtonType == Board.Type.Combined) Manager.BoardButton = Board.Button.All;
+        else Manager.BoardButton = Board.Button._4B;
+
+        OpenAchievement();
+    }
+    public void DuplicateBoard() {
+        SystemFileIO.AddBoard(CurrentBoard);
+        UpdateBoardDropdown();
+    }
+    public void DeleteBoard() {
 
     }
-    public void DuplicateBoard(int index) { // TODO
-
+    public void ExportBoard() {
+        FileDialogIO.ExportBoardData(CurrentBoard);
     }
-    public void DeleteBoard(int index) { // TODO
-
-    }
-    public void ExportBoard() { // TODO
-
-    }
-    public void ImportBoard() { // TODO
-
+    public void ImportBoard() {
+        SystemFileIO.AddBoard(FileDialogIO.ImportBoardData());
+        UpdateBoardDropdown();
     }
 
     public IEnumerator ExportBoardImage() { // TODO 동적 생성 체크
@@ -117,12 +128,12 @@ public partial class BoardManager : MonoBehaviour
             EditToggleImage.sprite = SaveSprite;
             DeleteTrackTween?.Kill();
             DeleteTrackList.gameObject.SetActive(true);
-            DeleteTrackTween = DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 1f, 0.6f).SetEase(Ease.InOutCirc);
+            DeleteTrackTween = DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 1f, 0.6f);
         }
         else {
             EditToggleImage.sprite = EditSprite;
             DeleteTrackTween?.Kill();
-            DeleteTrackTween = DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 0f, 0.6f).SetEase(Ease.InOutCirc);
+            DeleteTrackTween = DOTween.To(() => DeleteTrackList.alpha, x => DeleteTrackList.alpha = x, 0f, 0.6f);
             DOVirtual.DelayedCall(0.6f, () => DeleteTrackList.gameObject.SetActive(false));
             UpdateStatistics();
         }

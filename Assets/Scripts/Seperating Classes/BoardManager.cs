@@ -149,7 +149,7 @@ public partial class BoardManager : MonoBehaviour
         Floor.transform.localScale = Vector3.one;
 
         A_Floor FL = Floor.GetComponent<A_Floor>();
-        FL.Init(FloorDat);
+        FL.Init(FloorDat, CurrentBoard.Board.CategoryType);
         FL.ReorderableList.Lv = Lv;
         FL.ReorderableList.Floor = floorIndex;
         FilterFloorEvent += new FilterCallback(FL.FilterCheckEmpty);
@@ -212,7 +212,7 @@ public partial class BoardManager : MonoBehaviour
         Floor.transform.localScale = Vector3.one;
         
         A_Floor FG = Floor.GetComponent<A_Floor>();
-        FG.Init(FloorDat);
+        FG.Init(FloorDat, CurrentBoard.Board.CategoryType);
         FG.ReorderableList.Lv = Lv;
         FG.ReorderableList.Floor = floorIndex;
         FilterFloorEvent += new FilterCallback(FG.FilterCheckEmpty);

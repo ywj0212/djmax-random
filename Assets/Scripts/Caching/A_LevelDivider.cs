@@ -32,9 +32,9 @@ public class A_LevelDivider : MonoBehaviour
         FloorParent.gameObject.SetActive(!isFolded);
 
         if(isFolded)
-            FoldIndicator.DORotate(new Vector3(0, 0, 180), 0.3f).SetEase(Ease.InOutCirc);
+            FoldIndicator.DORotate(new Vector3(0, 0, 180), 0.3f);
         else
-            FoldIndicator.DORotate(Vector3.zero, 0.3f).SetEase(Ease.InOutCirc);
+            FoldIndicator.DORotate(Vector3.zero, 0.3f);
         
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)FloorParent);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);

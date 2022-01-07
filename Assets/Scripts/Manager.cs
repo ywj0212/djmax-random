@@ -154,6 +154,7 @@ public class Manager : Singleton<Manager>
     private RandomSelector RandomSelector;
     private void Start() {
         DOTween.SetTweensCapacity(800, 100);
+        DOTween.defaultEaseType = Ease.InOutCirc;
         ToggleDelay = new WaitForSeconds(ToggleAllNoneDelay);
 
         BoardManager = GetComponent<BoardManager>();
@@ -169,7 +170,7 @@ public class Manager : Singleton<Manager>
         if(focusStatus)
             OnDemandRendering.renderFrameInterval = 1;
         else
-            OnDemandRendering.renderFrameInterval = 30;
+            OnDemandRendering.renderFrameInterval = 120;
     }
 
     public void InitFailAccept() {
@@ -298,13 +299,13 @@ public class Manager : Singleton<Manager>
 
     public static void ClearPanel() { inst.ClearPanelTween(); }
     private void ClearPanelTween() {
-        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false));
-        RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false));
-        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false));
-        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false));
-        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false));
-        AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false));
-        AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false));
+        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false));
+        RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0f).OnComplete(() => RandomResultPanel.gameObject.SetActive(false));
+        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0f).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false));
+        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0f).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false));
+        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0f).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false));
+        AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0f).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false));
+        AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0f).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false));
     }
 
     public static int? GetSelectedToggleIndex(ToggleGroup toggleGroup) {
@@ -350,13 +351,13 @@ public class Manager : Singleton<Manager>
             while(PanelTweens.Count > 0)
                 PanelTweens.Pop()?.Kill();
 
-            PanelTweens.Push(SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(AchievementInfoPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => AchievementInfoPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => AchievementResultPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(0, 0.5f).OnStart(() => AchievementInfoPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).OnStart(() => AchievementResultPanel.gameObject.SetActive(true)));
         }
         
         BoardManager.OpenAchievement();
@@ -368,13 +369,13 @@ public class Manager : Singleton<Manager>
             while(PanelTweens.Count > 0)
                 PanelTweens.Pop()?.Kill();
             
-            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => RandomResultPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).OnStart(() => RandomResultPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
 
             RandomSelectorUI.DefaultUIScreen.SetActive(true);
             RandomSelectorUI.SingleUIScreen.SetActive(false);
@@ -390,13 +391,13 @@ public class Manager : Singleton<Manager>
             while(PanelTweens.Count > 0)
                 PanelTweens.Pop()?.Kill();
             
-            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderReadyPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderBanPickPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderMainPanel.gameObject.SetActive(true)));
-            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
-            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).OnStart(() => CustomLadderReadyPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).OnStart(() => CustomLadderBanPickPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).OnStart(() => CustomLadderMainPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
         }
 
         SystemFileIO.GetLoadingSprite(BG);
@@ -406,29 +407,29 @@ public class Manager : Singleton<Manager>
     
     public static void OpenCustomLadderBanPickPanel() { inst._OpenCustomLadderBanPickPanel(); }
     public void _OpenCustomLadderBanPickPanel() {
-        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderBanPickPanel.DOMoveY(0, 0.5f).SetEase(Ease.InOutCirc);
+        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f);
+        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f);
+        CustomLadderBanPickPanel.DOMoveY(0, 0.5f);
     }
     public static void CloseCustomLadderBanPickPanel() { inst._CloseCustomLadderBanPickPanel(); }
     public void _CloseCustomLadderBanPickPanel() {
-        SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
+        SelectorOptionPanel.DOMoveX(0, 0.5f);
+        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f);
 
-        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
+        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f);
+        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f);
     }
     public static void OpenCustomLadderMatchPanel() { inst._OpenCustomLadderMatchPanel(); }
     public void _OpenCustomLadderMatchPanel() {
-        CustomLadderBanPickPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderMainPanel.DOMoveY(0, 0.5f).SetEase(Ease.InOutCirc);
+        CustomLadderBanPickPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f);
+        CustomLadderMainPanel.DOMoveY(0, 0.5f);
     }
     public static void CloseCustomLadderMatchPanel() { inst._CloseCustomLadderMatchPanel(); }
     public void _CloseCustomLadderMatchPanel() {
-        SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderReadyPanel.DOMoveX(Manager.GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderBanPickPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-        CustomLadderMainPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
+        SelectorOptionPanel.DOMoveX(0, 0.5f);
+        CustomLadderReadyPanel.DOMoveX(Manager.GetRectTransformWidth(BodyRect), 0.5f);
+        CustomLadderBanPickPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f);
+        CustomLadderMainPanel.DOMoveY(-Manager.GetRectTransformHeight(CustomLadderMainPanel), 0.5f);
     }
 
     public void _StartBtn() {

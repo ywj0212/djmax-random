@@ -136,7 +136,7 @@ public class CustomLadderMatch : MonoBehaviour
                 LR.LvToggleParent.Toggles[i].isOn = true;
         }
 
-        DOTween.To(() => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition, x => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition = x, 0f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.3f);
+        DOTween.To(() => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition, x => Manager.CustomLadderUI.RoundScrollRect.verticalNormalizedPosition = x, 0f, 0.3f).SetDelay(0.3f);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Round.transform);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)Manager.CustomLadderUI.RoundVerticalParent);
         CustomLadderRound++;

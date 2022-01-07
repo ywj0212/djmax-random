@@ -25,15 +25,15 @@ public class A_Floor : MonoBehaviour
     public Button DeleteQualificationButton;
     [SerializeField] private GameObject PlayOptionField;
     [SerializeField] private Button[] PlayOptions;
-    public Toggle PlayOptionToggle;
-    public Image PlayOptionToggleImage;
-    public Image SpeedOption;
-    public Image FeverOption;
-    public Image FaderOption;
-    public Image ChaosOption;
+    [SerializeField] private Toggle PlayOptionToggle;
+    [SerializeField] private Image PlayOptionToggleImage;
+    [SerializeField] private Image SpeedOption;
+    [SerializeField] private Image FeverOption;
+    [SerializeField] private Image FaderOption;
+    [SerializeField] private Image ChaosOption;
     [Space]
-    public Button AddQualificationTierButton;
-    public Button[] TierDeleteButton;
+    [SerializeField] private Button AddQualificationTierButton;
+    [SerializeField] private Button[] TierDeleteButton;
     [Space]
     [SerializeField] private GameObject[] TierInfo;
     [SerializeField] private GameObject[] TierClear;
@@ -48,10 +48,12 @@ public class A_Floor : MonoBehaviour
 
     private bool isFolded = false;
     private bool isEditing = false;
+    private bool isCategoryCustom;
     private int TierIndex = 0;
     Board.ButtonData.LvData.FloorData DataReference;
-    public void Init(Board.ButtonData.LvData.FloorData reference) {
+    public void Init(Board.ButtonData.LvData.FloorData reference, Board.Ctgr type) {
         DataReference = reference;
+        isCategoryCustom = (type == Board.Ctgr.Custom);
         UpdateQualificationPanel();
     }
     public void OnAchievementUpdate(ushort index) {
@@ -224,6 +226,8 @@ public class A_Floor : MonoBehaviour
         AddQualificationButton.gameObject.SetActive(DataReference.Qualification == null && state);
         AddQualificationTierButton.gameObject.SetActive((DataReference.Qualification?.QualificationTier == null || DataReference.Qualification.QualificationTier.Count < 3)
                                                       && state);
+        Title.interactable = isCategoryCustom && state;
+
         foreach(TMP_InputField i in RateField) i.interactable = state;
         foreach(TMP_InputField i in BreakField) i.interactable = state;
         foreach(TMP_InputField i in AdditionalField) i.interactable = state;
@@ -244,9 +248,9 @@ public class A_Floor : MonoBehaviour
         FoldingParent.gameObject.SetActive(!isFolded);
 
         if(isFolded)
-            FoldIndicator.DORotate(new Vector3(0, 0, 180), 0.3f).SetEase(Ease.InOutCirc);
+            FoldIndicator.DORotate(new Vector3(0, 0, 180), 0.3f);
         else
-            FoldIndicator.DORotate(Vector3.zero, 0.3f).SetEase(Ease.InOutCirc);
+            FoldIndicator.DORotate(Vector3.zero, 0.3f);
         
         if(gameObject.activeInHierarchy)
             StartCoroutine(RebuildLayout(true));

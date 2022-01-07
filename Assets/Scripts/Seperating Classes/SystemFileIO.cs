@@ -43,7 +43,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
 
     public static AchievementData   AchievementData;
     public static List<BoardInfo>   Boards = new List<BoardInfo>();
-    public static BoardData         BoardData;
+    public static BoardData         BoardData = new BoardData();
 
     public static void LoadData() {
         Boards.AddRange(MainData.DefaultBoards);
@@ -65,6 +65,10 @@ public class SystemFileIO : Singleton<SystemFileIO>
 
         inst.BoardManager.SetInitBoard();
         inst.BoardManager.UpdateBoardDropdown();
+    }
+    public static void AddBoard(BoardInfo board) {
+        Boards.Add(board);
+        BoardData.Boards.Add(board);
     }
 
     private void SaveBoardData(BoardInfo boardinfo) {
@@ -202,7 +206,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
             target.Sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
 
             target.Image.sprite = target.Sprite;
-            target.Tween = DOTween.To(() => target.Image.fillAmount, x => target.Image.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
+            target.Tween = DOTween.To(() => target.Image.fillAmount, x => target.Image.fillAmount = x, 1f, 0.3f).SetDelay(0.2f);
         }
     }
 
