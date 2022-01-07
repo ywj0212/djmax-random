@@ -612,7 +612,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 656404870993271739}
-  - component: {fileID: 6696815316408042406}
+  - component: {fileID: 5054236621060701797}
   - component: {fileID: 656404870993271365}
   - component: {fileID: 1282955248566865431}
   - component: {fileID: 1927858213339760696}
@@ -645,7 +645,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &6696815316408042406
+--- !u!114 &5054236621060701797
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -654,11 +654,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 656404870993271738}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 874254a068adb034e93758b2b7e383cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a27acf8dcef26c41b7372b96b59b608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Title: {fileID: 8381047079716288191}
-  ListParent: {fileID: 4752794900821855951}
+  TrackParent: {fileID: 4752794900821855951}
   FoldingParent: {fileID: 6563865686436248582}
   ReorderableList: {fileID: 3651440971584509018}
   FoldIndicator: {fileID: 5306683385601030062}
@@ -679,8 +679,6 @@ MonoBehaviour:
   FeverOption: {fileID: 6813185424638945546}
   FaderOption: {fileID: 1850212110556078336}
   ChaosOption: {fileID: 414992459755328991}
-  CreateSprite: {fileID: 21300000, guid: 54deb970f71a0cd48bbbe0b8583bcd39, type: 3}
-  DeleteSprite: {fileID: 21300000, guid: 1704ad4c498b0fb489817f00cba47cf3, type: 3}
   AddQualificationTierButton: {fileID: 1712886292996143860}
   TierDeleteButton:
   - {fileID: 4522765140358469279}
@@ -900,7 +898,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: FoldToggle
         m_Mode: 1
@@ -1512,8 +1510,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: AddQualificationTier
         m_Mode: 1
         m_Arguments:
@@ -1855,7 +1853,7 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: ChaosUp
         m_Mode: 1
@@ -1870,7 +1868,7 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: ChaosDown
         m_Mode: 1
@@ -2418,8 +2416,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: AddQuailfication
         m_Mode: 1
         m_Arguments:
@@ -2705,8 +2703,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -2717,8 +2715,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierAdditional
         m_Mode: 0
         m_Arguments:
@@ -3189,7 +3187,7 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: FaderUp
         m_Mode: 1
@@ -3204,7 +3202,7 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: FaderDown
         m_Mode: 1
@@ -3901,8 +3899,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -3913,8 +3911,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: DeleteQualificationTier
         m_Mode: 1
         m_Arguments:
@@ -4137,8 +4135,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 960, y: 0}
-  m_SizeDelta: {x: 1920, y: 0}
+  m_AnchoredPosition: {x: 468, y: 0}
+  m_SizeDelta: {x: 936, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &418922562650965812
 MonoBehaviour:
@@ -5236,8 +5234,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -5248,8 +5246,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: DeleteQualificationTier
         m_Mode: 1
         m_Arguments:
@@ -5708,8 +5706,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -5720,8 +5718,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierRate
         m_Mode: 0
         m_Arguments:
@@ -6473,8 +6471,8 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetPlayOption
         m_Mode: 0
         m_Arguments:
@@ -7382,8 +7380,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -7394,8 +7392,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierBreak
         m_Mode: 0
         m_Arguments:
@@ -7933,8 +7931,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -7945,8 +7943,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: DeleteQualificationTier
         m_Mode: 1
         m_Arguments:
@@ -8403,8 +8401,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -8415,8 +8413,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierRate
         m_Mode: 0
         m_Arguments:
@@ -8856,8 +8854,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -8868,8 +8866,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierRate
         m_Mode: 0
         m_Arguments:
@@ -9056,8 +9054,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -9068,8 +9066,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierAdditional
         m_Mode: 0
         m_Arguments:
@@ -9444,8 +9442,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -9456,8 +9454,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierAdditional
         m_Mode: 0
         m_Arguments:
@@ -10053,8 +10051,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -10065,8 +10063,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierBreak
         m_Mode: 0
         m_Arguments:
@@ -10619,8 +10617,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 931.5, y: 0}
-  m_SizeDelta: {x: 1833, y: 0}
+  m_AnchoredPosition: {x: 439.5, y: 0}
+  m_SizeDelta: {x: 849, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3938642598569537202
 MonoBehaviour:
@@ -11012,8 +11010,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: DeleteQualification
         m_Mode: 1
         m_Arguments:
@@ -11374,7 +11372,7 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: SpeedUp
         m_Mode: 1
@@ -11389,7 +11387,7 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: SpeedDown
         m_Mode: 1
@@ -11462,8 +11460,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 958.5, y: 0}
-  m_SizeDelta: {x: 1863, y: 0}
+  m_AnchoredPosition: {x: 466.5, y: 0}
+  m_SizeDelta: {x: 879, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9114697855318546403
 CanvasRenderer:
@@ -12057,8 +12055,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 958.5, y: 0}
-  m_SizeDelta: {x: 1863, y: 0}
+  m_AnchoredPosition: {x: 466.5, y: 0}
+  m_SizeDelta: {x: 879, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6965490888875873550
 CanvasRenderer:
@@ -12169,7 +12167,7 @@ MonoBehaviour:
   OnElementDropped:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: OnReorder
         m_Mode: 1
@@ -12184,7 +12182,7 @@ MonoBehaviour:
   OnElementGrabbed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: OnReorder
         m_Mode: 1
@@ -12199,7 +12197,7 @@ MonoBehaviour:
   OnElementRemoved:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: OnReorder
         m_Mode: 1
@@ -12214,7 +12212,7 @@ MonoBehaviour:
   OnElementReordered:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: OnReorder
         m_Mode: 1
@@ -12229,7 +12227,7 @@ MonoBehaviour:
   OnElementAdded:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: OnReorder
         m_Mode: 1
@@ -12436,8 +12434,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetTargetTierIndex
         m_Mode: 3
         m_Arguments:
@@ -12448,8 +12446,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 6696815316408042406}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SetQualificationTierBreak
         m_Mode: 0
         m_Arguments:
@@ -13262,7 +13260,7 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: FeverUp
         m_Mode: 1
@@ -13277,7 +13275,7 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6696815316408042406}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
         m_MethodName: FeverDown
         m_Mode: 1

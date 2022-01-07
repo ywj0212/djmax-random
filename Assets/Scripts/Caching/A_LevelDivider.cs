@@ -17,11 +17,14 @@ public class A_LevelDivider : MonoBehaviour
     private bool isFolded = false;
 
     public void SetEditMode(bool state) {
-        DeleteLevelButton.gameObject.SetActive(state);
-        NewFloorButton.gameObject.SetActive(state);
+        if(this != null && gameObject != null) {
+            DeleteLevelButton.gameObject.SetActive(state);
+            NewFloorButton.gameObject.SetActive(state);
+        }
     }
     public void FilterCheckEmpty(bool isFilter) {
-        gameObject.SetActive(!isFilter || FloorParent.ChildCountActive() != 0);
+        if(this != null && gameObject != null)
+            gameObject.SetActive(!isFilter || FloorParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {

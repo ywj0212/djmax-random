@@ -10,6 +10,10 @@ using TMPro;
 
 using Ookii.Dialogs;
 
+#if !UNITY_WEBGL
+
+// * 모든 GameObject.SetActive(bool state)를 하고 Dotween 걸어서 UI 모션 자연스럽게 처리해주면 너무 좋을 것 같은디..
+// * 이거까지 다 구현하고 출시하자.
 public partial class BoardManager : MonoBehaviour
 {
 #region Inspector
@@ -218,13 +222,13 @@ public partial class BoardManager : MonoBehaviour
 
         switch(Manager.BoardViewMode) {
             case Manager.ViewMode.List:
-                A_FloorList FL = CreateFloorList(fDat, parent, Lv, index);
+                A_Floor FL = CreateFloorList(fDat, parent, Lv, index);
                 FL.transform.SetSiblingIndex(0);
                 LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)FL.transform);
                 break;
             
             case Manager.ViewMode.Grid:
-                A_FloorGrid FG = CreateFloorGrid(fDat, parent, Lv, index);
+                A_Floor FG = CreateFloorGrid(fDat, parent, Lv, index);
                 FG.transform.SetSiblingIndex(0);
                 LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)FG.transform);
                 break;
@@ -293,6 +297,7 @@ public partial class BoardManager : MonoBehaviour
         }
 
         CloseAddTrackToFloorModal();
+        AchievementTrackIndexes.Add(index);
 
         foreach(RectTransform t in AddTrackParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)AddTrackParent);
@@ -338,3 +343,5 @@ public partial class BoardManager : MonoBehaviour
         ModalDeletionConfirm.SetActive(false);
     }
 }
+
+#endif

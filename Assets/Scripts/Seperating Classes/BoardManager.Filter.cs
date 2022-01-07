@@ -4,6 +4,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if !UNITY_WEBGL
+
 public partial class BoardManager : MonoBehaviour
 {
     [Header("Filter")]
@@ -134,3 +136,5 @@ public partial class BoardManager : MonoBehaviour
         }
     }
 }
+
+#endif

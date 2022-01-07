@@ -12,7 +12,7 @@ public class BoardTrack : MonoBehaviour
 
     public Button OpenInfo;
     public GameObject LevelMismatchAlert;
-
+    
     [HideInInspector] public ushort Index;
     [HideInInspector] public ushort SongIndex;
 }

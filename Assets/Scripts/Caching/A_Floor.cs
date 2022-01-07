@@ -1,17 +1,18 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 using TMPro;
 using DG.Tweening;
 using Mirix.DMRV;
 
-public class A_FloorList : MonoBehaviour
+public class A_Floor : MonoBehaviour
 {
     public TMP_InputField Title;
-    public Transform ListParent;
+    public Transform TrackParent;
     public Transform FoldingParent;
     public A_ReorderableList ReorderableList;
     [Space]
@@ -45,6 +46,7 @@ public class A_FloorList : MonoBehaviour
     [SerializeField] private TMP_InputField[] BreakField;
     [SerializeField] private TMP_InputField[] AdditionalField;
 
+    private bool isFolded = false;
     private bool isEditing = false;
     private int TierIndex = 0;
     Board.ButtonData.LvData.FloorData DataReference;
@@ -56,6 +58,7 @@ public class A_FloorList : MonoBehaviour
         if(DataReference.Tracks.Contains(index)) UpdateTierCurrentValue();
     }
     private void UpdateQualificationPanel() {
+        if(DataReference == null) return;
         if(DataReference.Qualification == null) {
             QualificationField.SetActive(false);
             return;
@@ -66,6 +69,8 @@ public class A_FloorList : MonoBehaviour
         UpdateTierPanel();
     }
     private void UpdatePlayOptionPanel() {
+        if(DataReference == null || DataReference.Qualification == null) return;
+
         if(isEditing) PlayOptionField.SetActive(true);
         else if(DataReference.Qualification.PlayOption != null) PlayOptionField.SetActive(true);
         else PlayOptionField.SetActive(false);
@@ -83,6 +88,9 @@ public class A_FloorList : MonoBehaviour
         foreach(GameObject o in Rate) o.SetActive(false);
         foreach(GameObject o in Break) o.SetActive(false);
         foreach(GameObject o in Additional) o.SetActive(false);
+
+        UpdateTierCurrentValue();
+        if(DataReference == null || DataReference.Qualification == null) return;
 
         if(DataReference.Qualification.QualificationTier == null)
             DataReference.Qualification.QualificationTier = new List<Board.ButtonData.LvData.FloorData.QualificationTierData>();
@@ -123,13 +131,22 @@ public class A_FloorList : MonoBehaviour
 
             TierDeleteButton[i].gameObject.SetActive(isEditing);
         }
-        UpdateTierCurrentValue();
 
         if(gameObject.activeInHierarchy)
             StartCoroutine(RebuildLayout(true));
     }
     private void UpdateTierCurrentValue() {
-        
+        if(DataReference?.Qualification?.QualificationTier == null) return;
+
+        for(int i = 0; i < DataReference.Qualification.QualificationTier.Count; i++) {
+            var Q = DataReference.Qualification.QualificationTier[i];
+            
+            float avgRate = DataReference.Tracks.Where(t => SystemFileIO.GetAchievementSave(t).Status != Achievement.State.None).Average(t => SystemFileIO.GetAchievementSave(t).Rate);
+            CurrentRate[i].text = string.Format("{0:0.00}%", avgRate);
+
+            int sumBreak = DataReference.Tracks.Sum(t => SystemFileIO.GetAchievementSave(t).Break);
+            CurrentBreak[i].text = sumBreak.ToString();
+        }
     }
     public void SetPlayOption(bool state) {
         if(state) {
@@ -195,7 +212,6 @@ public class A_FloorList : MonoBehaviour
         DataReference.Qualification.QualificationTier[TierIndex].Additional = input;
     }
 
-    private bool isFolded = false;
     public void SetEditMode(bool state) {
         isEditing = state;
 
@@ -220,7 +236,7 @@ public class A_FloorList : MonoBehaviour
         UpdateQualificationPanel();
     }
     public void FilterCheckEmpty(bool isFilter) {
-        gameObject.SetActive(!isFilter || ListParent.ChildCountActive() != 0);
+        gameObject.SetActive(!isFilter || TrackParent.ChildCountActive() != 0);
     }
 
     public void FoldToggle() {
@@ -240,8 +256,8 @@ public class A_FloorList : MonoBehaviour
             StartCoroutine(RebuildLayout());
     }
     private IEnumerator RebuildLayout(bool immediately = false) {
-        foreach(RectTransform t in ListParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)ListParent);
+        foreach(RectTransform t in TrackParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)TrackParent);
         if(!immediately)
             yield return null;
         foreach(RectTransform t in FoldingParent) LayoutRebuilder.ForceRebuildLayoutImmediate(t);
@@ -249,8 +265,10 @@ public class A_FloorList : MonoBehaviour
         if(!immediately)
             yield return null;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent);
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent);
+        if(transform.parent != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent);
+        if(transform.parent?.parent != null)
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.parent);
         yield break;
     }
 

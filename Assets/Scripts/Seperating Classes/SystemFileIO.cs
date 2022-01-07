@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using Mirix.DMRV;
 using DG.Tweening;
+using AT;
 
 [Serializable] public class AchievementData {
     public List<Achievement> achievements = new List<Achievement>();
@@ -30,12 +31,10 @@ public class SystemFileIO : Singleton<SystemFileIO>
     [Header("References")]
     [SerializeField] private BoardManager BoardManager;
 
-    [Header("Resources Path")]
-    [SerializeField] private string ThumbnailResourcePath;
-    [SerializeField] private string PreviewResourcePath;
-    [SerializeField] private string DifficultyResourcePath;
-    [SerializeField] private string CategoryResourcePath;
-    [SerializeField] private string AchievementTagResourcePath;
+    [Header("Resources")]
+    [SerializeField] private SerializableDictionary<string, Sprite> DifficultySprites;
+    [SerializeField] private SerializableDictionary<string, Sprite> ButtonDifficultySprites;
+    [SerializeField] private SerializableDictionary<string, Sprite> ButtonSprites;
 
     private static string BoardDataPath     => string.Format("{0}/{1}.bin", Application.persistentDataPath, "boards");
     private static string AchievementPath   => string.Format("{0}/{1}.json", Application.persistentDataPath, "achiv");
@@ -145,37 +144,44 @@ public class SystemFileIO : Singleton<SystemFileIO>
             return "COLLABORATION";
     }
     public static Sprite GetDifficultySprite(string button, string difficulty) {
-        return Resources.Load<Sprite>(inst.DifficultyResourcePath + button + difficulty) ?? Resources.Load<Sprite>(inst.DifficultyResourcePath + "4BNM");
+        return inst.ButtonDifficultySprites[button+difficulty];
     }
     public static Sprite GetAchievementDifficultySprite(string difficulty) {
-        return Resources.Load<Sprite>(inst.AchievementTagResourcePath + difficulty);
+        return inst.DifficultySprites[difficulty];
     }
     public static Sprite GetAchievementButtonSprite(string button) {
-        return Resources.Load<Sprite>(inst.AchievementTagResourcePath + button);
+        return inst.ButtonSprites[button];
     }
-    
-    public static void GetCategorySprite(Image target, string category) {
+
+    public static ImageTweenDestroyer GetCategorySprite(Image target, string category) {
         if(!MainData.CategoryAbbr.ContainsKey(category))
             category = "COLLAB";
         
-        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"category/{category}"));
+        return RequestSpriteFromWeb(target, $"category/{category}");
     }
-    public static void GetThumbnailSprite(Image target, ushort index) {
-        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"thumbnail/{index}"));
+    public static ImageTweenDestroyer GetThumbnailSprite(Image target, ushort index) {
+        return RequestSpriteFromWeb(target, $"thumbnail/{index}");
     }
-    public static void GetPreviewSprite(Image target, ushort index) {
-        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"preview/{index}"));
-    }
-
-    public static void GetLoadingSprite(Image target) {
-        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"BG"));
-    }
-    public static void GetLoadingSprite(Image target, ushort index) {
-        inst.StartCoroutine(inst.ApplySpriteFromWeb(target, $"loading/{index}"));
+    public static ImageTweenDestroyer GetPreviewSprite(Image target, ushort index) {
+        return RequestSpriteFromWeb(target, $"preview/{index}");
     }
 
-    private IEnumerator ApplySpriteFromWeb(Image target, string path)  {
+    public static ImageTweenDestroyer GetLoadingSprite(Image target) {
+        return RequestSpriteFromWeb(target, "BG");
+    }
+    public static ImageTweenDestroyer GetLoadingSprite(Image target, ushort index) {
+        return RequestSpriteFromWeb(target, $"loading/{index}");
+    }
+
+    private static ImageTweenDestroyer RequestSpriteFromWeb(Image target, string path)  {
+        ImageTweenDestroyer ITD = target.GetComponent<ImageTweenDestroyer>();
         target.fillAmount = 0;
+        ITD.Image = target;
+        ITD.Coroutine = inst.StartCoroutine(inst.ApplySpriteFromWeb(ITD, path));
+
+        return ITD;
+    }
+    private IEnumerator ApplySpriteFromWeb(ImageTweenDestroyer target, string path)  {
         string webroot = "https://req.mirix.kr/dmrv-random/";
         string url = webroot + path + ".png";
 
@@ -183,7 +189,7 @@ public class SystemFileIO : Singleton<SystemFileIO>
         yield return webReq.SendWebRequest();
 
         if(webReq.result == UnityWebRequest.Result.ConnectionError || webReq.result == UnityWebRequest.Result.ProtocolError) {
-            print($"{webReq.error} at {path}");
+            Debug.LogWarning($"{webReq.error} at {path}");
         }
         else {
             Texture2D texture = ((DownloadHandlerTexture)webReq.downloadHandler).texture;
@@ -192,12 +198,11 @@ public class SystemFileIO : Singleton<SystemFileIO>
             if(target == null || target.gameObject == null)
                 yield break;
 
-            target.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
-            ImageTweenDestroyer ITD = target.GetComponent<ImageTweenDestroyer>();
-            Tween tw = null;
-            ITD.Tween = tw;
-            ITD.Image = target;
-            tw = DOTween.To(() => target.fillAmount, x => target.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
+            target.Texture = texture;
+            target.Sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+
+            target.Image.sprite = target.Sprite;
+            target.Tween = DOTween.To(() => target.Image.fillAmount, x => target.Image.fillAmount = x, 1f, 0.3f).SetEase(Ease.InOutCirc).SetDelay(0.2f);
         }
     }
 

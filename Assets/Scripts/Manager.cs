@@ -138,7 +138,7 @@ public class Manager : Singleton<Manager>
     public enum ViewMode                        { List, Grid }
 
     public static readonly string[] ButtonString      = { "4B", "5B", "6B", "8B" };
-    public static State AppState                = State.Achievements;
+    public static State AppState                = State.Random;
     public static ViewMode BoardViewMode        = ViewMode.List;
     public static Board.Button BoardButton      = Board.Button._4B;
 
@@ -161,8 +161,15 @@ public class Manager : Singleton<Manager>
         RandomSelector = GetComponent<RandomSelector>();
 
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 60;        
+        Application.targetFrameRate = 30;
+        OnDemandRendering.renderFrameInterval = 1;
         StartCoroutine(Init());
+    }
+    private void OnApplicationFocus(bool focusStatus) {
+        if(focusStatus)
+            OnDemandRendering.renderFrameInterval = 1;
+        else
+            OnDemandRendering.renderFrameInterval = 30;
     }
 
     public void InitFailAccept() {
@@ -242,11 +249,27 @@ public class Manager : Singleton<Manager>
 
         SystemFileIO.LoadData();
         VersionText.text = SystemFileIO.MainData.Version;
-        OpenAchievement(true);
-
+        OpenRandomSelector(true);
     }
 
     public void ChangeApplicationMode() {
+
+#if UNITY_WEBGL
+        switch(AppState) {
+            case State.Random:
+                AppState = State.Ladder;
+                OpenCustomLadder(true);
+                break;
+            
+            case State.Ladder:
+                if(CustomLadderMatch.CustomLadderState != CustomLadderMatch.LadderState.Ready)
+                    return;
+                
+                AppState = State.Random;
+                OpenRandomSelector(true);
+                break;
+        }
+#else
         switch(AppState) {
             case State.Achievements:
                 AppState = State.Random;
@@ -266,7 +289,7 @@ public class Manager : Singleton<Manager>
                 AppState = State.Achievements; OpenAchievement(true);
                 break;
         }
-
+#endif
         Resources.UnloadUnusedAssets();
         System.GC.Collect();
         TitleText.text = StateTitleString[(int)AppState];
@@ -275,13 +298,13 @@ public class Manager : Singleton<Manager>
 
     public static void ClearPanel() { inst.ClearPanelTween(); }
     private void ClearPanelTween() {
-        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).SetEase(Ease.InOutCirc);
-        RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0f).SetEase(Ease.InOutCirc);
-        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0f).SetEase(Ease.InOutCirc);
-        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0f).SetEase(Ease.InOutCirc);
-        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0f).SetEase(Ease.InOutCirc);
-        AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0f).SetEase(Ease.InOutCirc);
-        AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0f).SetEase(Ease.InOutCirc);
+        SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false));
+        RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false));
+        CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false));
+        CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false));
+        CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false));
+        AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false));
+        AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0f).SetEase(Ease.InOutCirc).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false));
     }
 
     public static int? GetSelectedToggleIndex(ToggleGroup toggleGroup) {
@@ -320,32 +343,38 @@ public class Manager : Singleton<Manager>
         return rect.rect.height * ratio;
     }
 
+    private Stack<Tween> PanelTweens = new Stack<Tween>();
     public static void OpenAchievement(bool isAppStateChanged = false) { inst._OpenAchievement(isAppStateChanged); }
-    public static void OpenRandomSelector(bool isAppStateChanged = false) { inst._OpenRandomSelector(isAppStateChanged); }
-    public static void OpenCustomLadder(bool isAppStateChanged = false) { inst._OpenCustomLadder(isAppStateChanged); }
     public void _OpenAchievement(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).SetEase(Ease.InOutCirc);
-            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
-            AchievementInfoPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
-            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
+            while(PanelTweens.Count > 0)
+                PanelTweens.Pop()?.Kill();
+
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => AchievementInfoPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => AchievementResultPanel.gameObject.SetActive(true)));
         }
         
         BoardManager.OpenAchievement();
         AppState = State.Achievements;
     }
+    public static void OpenRandomSelector(bool isAppStateChanged = false) { inst._OpenRandomSelector(isAppStateChanged); }
     public void _OpenRandomSelector(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
-            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
-            AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc);
-            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc);
+            while(PanelTweens.Count > 0)
+                PanelTweens.Pop()?.Kill();
+            
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => RandomResultPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(CustomLadderReadyPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderReadyPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderBanPickPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => CustomLadderMainPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
 
             RandomSelectorUI.DefaultUIScreen.SetActive(true);
             RandomSelectorUI.SingleUIScreen.SetActive(false);
@@ -355,15 +384,19 @@ public class Manager : Singleton<Manager>
         SystemFileIO.GetLoadingSprite(BG);
         BGPrev.sprite = BG.sprite;
     }
+    public static void OpenCustomLadder(bool isAppStateChanged = false) { inst._OpenCustomLadder(isAppStateChanged); }
     public void _OpenCustomLadder(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
-            SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc);
-            RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc);
-            CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc);
-            AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc);
-            AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc);
+            while(PanelTweens.Count > 0)
+                PanelTweens.Pop()?.Kill();
+            
+            PanelTweens.Push(SelectorOptionPanel.DOMoveX(0, 0.5f).SetEase(Ease.InOutCirc).OnStart(() => SelectorOptionPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(RandomResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(RandomResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => RandomResultPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(CustomLadderReadyPanel.DOMoveX(GetRectTransformWidth(BodyRect), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderReadyPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderBanPickPanel.DOMoveY(-GetRectTransformHeight(CustomLadderBanPickPanel), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderBanPickPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(CustomLadderMainPanel.DOMoveY(-GetRectTransformHeight(CustomLadderMainPanel), 0.5f).SetEase(Ease.InOutCirc).OnStart(() => CustomLadderMainPanel.gameObject.SetActive(true)));
+            PanelTweens.Push(AchievementInfoPanel.DOMoveX(-GetRectTransformWidth(AchievementInfoPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementInfoPanel.gameObject.SetActive(false)));
+            PanelTweens.Push(AchievementResultPanel.DOMoveX(GetRectTransformWidth(BodyRect) + GetRectTransformWidth(AchievementResultPanel), 0.5f).SetEase(Ease.InOutCirc).OnComplete(() => AchievementResultPanel.gameObject.SetActive(false)));
         }
 
         SystemFileIO.GetLoadingSprite(BG);
