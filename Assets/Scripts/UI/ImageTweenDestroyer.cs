@@ -7,7 +7,6 @@ using DG.Tweening;
 public class ImageTweenDestroyer : MonoBehaviour
 {
     public Tween Tween;
-    public Coroutine Coroutine;
     public Image Image;
     public Sprite Sprite;
     public Texture2D Texture;
@@ -17,7 +16,6 @@ public class ImageTweenDestroyer : MonoBehaviour
     }
     private void OnDestroy() {
         Tween?.Kill();
-        if(Coroutine != null) StopCoroutine(Coroutine);
         
         if(Sprite != null) Destroy(Sprite);
         if(Texture != null) Destroy(Texture);

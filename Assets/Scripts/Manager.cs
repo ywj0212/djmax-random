@@ -27,6 +27,11 @@ public class Manager : Singleton<Manager>
     [SerializeField] private GameObject ModalBackdrop;
     [SerializeField] private GameObject ModalInitFail;
     [SerializeField] private TextMeshProUGUI InitFailErrorCode;
+    [SerializeField] private GameObject ModalNotification;
+    [SerializeField] private GameObject NotificationPrefab;
+    [SerializeField] private Transform NotificationParent;
+    [SerializeField] private GameObject NotificationDefaultPanel;
+    [SerializeField] private GameObject LoadingPanel;
 
     [Header("Body")]
     [SerializeField] private Image         _BG;
@@ -133,9 +138,9 @@ public class Manager : Singleton<Manager>
     }
 #endregion
     
-    public enum State                           { Achievements, Random, Ladder }
+    public enum State                             { Achievements, Random, Ladder }
     private readonly string[] StateTitleString  = { "Achievements", "Random Selector", "Custom Ladder" };
-    public enum ViewMode                        { List, Grid }
+    public enum ViewMode                          { List, Grid }
 
     public static readonly string[] ButtonString      = { "4B", "5B", "6B", "8B" };
     public static State AppState                = State.Random;
@@ -162,7 +167,7 @@ public class Manager : Singleton<Manager>
         RandomSelector = GetComponent<RandomSelector>();
 
         QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = 60;
         OnDemandRendering.renderFrameInterval = 1;
         StartCoroutine(Init());
     }
@@ -170,13 +175,15 @@ public class Manager : Singleton<Manager>
         if(focusStatus)
             OnDemandRendering.renderFrameInterval = 1;
         else
-            OnDemandRendering.renderFrameInterval = 120;
+            OnDemandRendering.renderFrameInterval = 240;
     }
 
     public void InitFailAccept() {
         Application.Quit();
     }
     private IEnumerator Init() {
+        LoadingPanel.SetActive(true);
+        ModalBackdrop.SetActive(true);
         ClearPanel();
 
         UnityWebRequest webReq = UnityWebRequest.Get("https://req.mirix.kr/dmrv-random/main.bin");
@@ -198,23 +205,45 @@ public class Manager : Singleton<Manager>
         BGPrev.sprite = BG.sprite;
 
         RandomSelector.DLCs.AddRange(SystemFileIO.MainData.DLCList);
-        BoardManager.DLCs.AddRange(SystemFileIO.MainData.DLCList);
 
-        foreach (string dlc in SystemFileIO.MainData.DLCList)
+#if !UNITY_WEBGL
+        BoardManager.DLCs.AddRange(SystemFileIO.MainData.DLCList);
+#endif
+        if(SystemFileIO.MainData.Notifications.Count > 0) NotificationDefaultPanel.SetActive(false);
+        foreach(MainData.Notification n in SystemFileIO.MainData.Notifications) {
+            GameObject no = Instantiate(NotificationPrefab, NotificationParent);
+            no.transform.localScale = Vector3.one;
+
+            N_Notification NN = no.GetComponent<N_Notification>();
+            NN.Header.text = n.Header;
+            NN.Body.text = n.Body;
+        }
+        foreach(RectTransform r in NotificationParent) LayoutRebuilder.ForceRebuildLayoutImmediate(r);
+        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)NotificationParent);
+
+        foreach(string dlc in SystemFileIO.MainData.DLCList)
         {
             GameObject selector = Instantiate(RandomSelectorUI.DLCSelectorPrefab, RandomSelectorUI.DLCSelectorParent);
             selector.transform.localScale = Vector3.one;
 
+#if !UNITY_WEBGL
             GameObject board = Instantiate(RandomSelectorUI.DLCSelectorPrefab, BoardManager.DLCToggleParent);
             board.transform.localScale = Vector3.one;
-            
+#endif
+
             DLC_Selector sel = selector.GetComponent<DLC_Selector>();
             sel.Toggle.onValueChanged.AddListener((state) => RandomSelector.DLC(state, dlc));
+
+#if !UNITY_WEBGL
             DLC_Selector bd = board.GetComponent<DLC_Selector>();
             bd.Toggle.onValueChanged.AddListener((state) => BoardManager.DLC(state, dlc));
+#endif
 
             RandomSelectorUI.DLCs.Add(sel.Toggle);
+
+#if !UNITY_WEBGL
             BoardManager.DLCToggles.Add(bd.Toggle);
+#endif
             
             {
                 webReq = UnityWebRequestTexture.GetTexture($"https://req.mirix.kr/dmrv-random/dlc/{dlc}_on.png");
@@ -228,7 +257,10 @@ public class Manager : Singleton<Manager>
 
                     Rect rect = new Rect(0, 0, texture.width, texture.height);
                     sel.On.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+
+#if !UNITY_WEBGL
                     bd.On.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+#endif
                 }
             }
             {
@@ -243,14 +275,40 @@ public class Manager : Singleton<Manager>
 
                     Rect rect = new Rect(0, 0, texture.width, texture.height);
                     sel.Off.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+
+#if !UNITY_WEBGL
                     bd.Off.sprite = Sprite.Create(texture, rect, new Vector2(0.5f, 0.5f));
+#endif
                 }
             }
         }
 
+#if !UNITY_WEBGL
         SystemFileIO.LoadData();
+#endif
         VersionText.text = SystemFileIO.MainData.Version;
         OpenRandomSelector(true);
+        LoadingPanel.SetActive(false);
+        ModalBackdrop.SetActive(false);
+
+#if UNITY_EDITOR
+        print("<b><color=#ffff00>SongTable Test</color></b>");
+        foreach(var i in SystemFileIO.MainData.SongTable) {
+            if(!SystemFileIO.MainData.DLCList.Contains(i.Value.Ctgr)) print($"   Ctgr Not Found @{i.Key}: {i.Value.Ctgr}");
+        }
+        print("... Done!");
+        print("");
+        print("<b><color=#ffff00>TrackTable Test</color></b>");
+        string[] bt = new string[] {"4B", "5B", "6B", "8B"};
+        string[] df = new string[] {"NM", "HD", "MX", "SC"};
+        foreach(var i in SystemFileIO.MainData.TrackTable) {
+            if(!SystemFileIO.MainData.SongTable.ContainsKey(i.Value.SongIndex)) print($"   SongIndex Not Found @{i.Key}: {i.Value.SongIndex}");
+            if(!bt.Contains(i.Value.Bt)) print($"   Button Not Vaild @{i.Key}: {i.Value.Bt}");
+            if(!df.Contains(i.Value.Diff)) print($"   Difficulty Not Vaild @{i.Key}: {i.Value.Diff}");
+            if(i.Value.Lv < 1 || i.Value.Lv > 15) print($"   Level Not Vaild @{i.Key}: {i.Value.Lv}");
+        }
+        print("... Done!");
+#endif
     }
 
     public void ChangeApplicationMode() {
@@ -297,6 +355,15 @@ public class Manager : Singleton<Manager>
         TitleStarShine.SetTrigger("Shine");
     }
 
+    public void OpenNotificationModal() {
+        ModalBackdrop.SetActive(true);
+        ModalNotification.SetActive(true);
+    }
+    public void CloseNotificationModal() {
+        ModalBackdrop.SetActive(false);
+        ModalNotification.SetActive(false);
+    }
+
     public static void ClearPanel() { inst.ClearPanelTween(); }
     private void ClearPanelTween() {
         SelectorOptionPanel.DOMoveX(-GetRectTransformWidth(SelectorOptionPanel), 0f).OnComplete(() => SelectorOptionPanel.gameObject.SetActive(false));
@@ -325,7 +392,7 @@ public class Manager : Singleton<Manager>
     }
     public static void ApplySelectionToToggleGroup(ToggleGroup toggleGroup, int index) {
         toggleGroup.SetAllTogglesOff();
-        Toggle[] toggles = toggleGroup.GetComponentsInChildren<Toggle>();
+        Toggle[] toggles = toggleGroup.GetComponentsInChildren<Toggle>(true);
         if(index < 0 || index >= toggles.Length)
             return;
         
@@ -345,6 +412,7 @@ public class Manager : Singleton<Manager>
     }
 
     private Stack<Tween> PanelTweens = new Stack<Tween>();
+#if !UNITY_WEBGL
     public static void OpenAchievement(bool isAppStateChanged = false) { inst._OpenAchievement(isAppStateChanged); }
     public void _OpenAchievement(bool isAppStateChanged = false) {
         if(isAppStateChanged) {
@@ -363,6 +431,7 @@ public class Manager : Singleton<Manager>
         BoardManager.OpenAchievement();
         AppState = State.Achievements;
     }
+#endif
     public static void OpenRandomSelector(bool isAppStateChanged = false) { inst._OpenRandomSelector(isAppStateChanged); }
     public void _OpenRandomSelector(bool isAppStateChanged = false) {
         if(isAppStateChanged) {

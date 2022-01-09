@@ -898,8 +898,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: FoldToggle
         m_Mode: 1
         m_Arguments:
@@ -1853,8 +1853,8 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: ChaosUp
         m_Mode: 1
         m_Arguments:
@@ -1868,8 +1868,8 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: ChaosDown
         m_Mode: 1
         m_Arguments:
@@ -3187,8 +3187,8 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: FaderUp
         m_Mode: 1
         m_Arguments:
@@ -3202,8 +3202,8 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: FaderDown
         m_Mode: 1
         m_Arguments:
@@ -4135,8 +4135,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 468, y: 0}
-  m_SizeDelta: {x: 936, y: 0}
+  m_AnchoredPosition: {x: 960, y: 0}
+  m_SizeDelta: {x: 1920, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &418922562650965812
 MonoBehaviour:
@@ -7477,8 +7477,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: -0.5}
-  m_SizeDelta: {x: -20, y: -2}
+  m_AnchoredPosition: {x: 20, y: 2.5}
+  m_SizeDelta: {x: -20, y: -5}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &39982495161001642
 CanvasRenderer:
@@ -7579,7 +7579,19 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
+        m_MethodName: SetFloorName
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
@@ -8528,7 +8540,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Floor Name
+  m_text: Enter Floor Name
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 85e2971af1966bb448624d7f9613a132, type: 2}
   m_sharedMaterial: {fileID: 4870995247683277901, guid: 85e2971af1966bb448624d7f9613a132, type: 2}
@@ -8537,8 +8549,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 2583691263
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0.6}
+    rgba: 1291845631
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0.29803923}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8555,10 +8567,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
+  m_fontSize: 25
   m_fontSizeBase: 28
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 10
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -10617,8 +10629,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 439.5, y: 0}
-  m_SizeDelta: {x: 849, y: 0}
+  m_AnchoredPosition: {x: 931.5, y: 0}
+  m_SizeDelta: {x: 1833, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3938642598569537202
 MonoBehaviour:
@@ -10826,10 +10838,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
+  m_fontSize: 72
   m_fontSizeBase: 28
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 10
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -11372,8 +11384,8 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SpeedUp
         m_Mode: 1
         m_Arguments:
@@ -11387,8 +11399,8 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: SpeedDown
         m_Mode: 1
         m_Arguments:
@@ -11460,8 +11472,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 466.5, y: 0}
-  m_SizeDelta: {x: 879, y: 0}
+  m_AnchoredPosition: {x: 958.5, y: 0}
+  m_SizeDelta: {x: 1863, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9114697855318546403
 CanvasRenderer:
@@ -12055,8 +12067,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 466.5, y: 0}
-  m_SizeDelta: {x: 879, y: 0}
+  m_AnchoredPosition: {x: 958.5, y: 0}
+  m_SizeDelta: {x: 1863, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6965490888875873550
 CanvasRenderer:
@@ -13260,8 +13272,8 @@ MonoBehaviour:
   onLeftClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: FeverUp
         m_Mode: 1
         m_Arguments:
@@ -13275,8 +13287,8 @@ MonoBehaviour:
   onRightClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: A_FloorList, Assembly-CSharp
+      - m_Target: {fileID: 5054236621060701797}
+        m_TargetAssemblyTypeName: A_Floor, Assembly-CSharp
         m_MethodName: FeverDown
         m_Mode: 1
         m_Arguments:

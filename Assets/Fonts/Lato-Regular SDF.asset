@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Lato-Regular Atlas Material
-  m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
+  m_Shader: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -1490,6 +1490,20 @@ MonoBehaviour:
       m_Height: 0
     m_Scale: 1
     m_AtlasIndex: 0
+  - m_Index: 153
+    m_Metrics:
+      m_Width: 67.578125
+      m_Height: 66.984375
+      m_HorizontalBearingX: 9.453125
+      m_HorizontalBearingY: 83.40625
+      m_HorizontalAdvance: 87
+    m_GlyphRect:
+      m_X: 896
+      m_Y: 760
+      m_Width: 69
+      m_Height: 68
+    m_Scale: 1
+    m_AtlasIndex: 0
   - m_Index: 240
     m_Metrics:
       m_Width: 95.859375
@@ -1504,18 +1518,18 @@ MonoBehaviour:
       m_Height: 20
     m_Scale: 1
     m_AtlasIndex: 0
-  - m_Index: 153
+  - m_Index: 2
     m_Metrics:
-      m_Width: 67.578125
-      m_Height: 66.984375
-      m_HorizontalBearingX: 9.453125
-      m_HorizontalBearingY: 83.40625
-      m_HorizontalAdvance: 87
+      m_Width: 0
+      m_Height: 0
+      m_HorizontalBearingX: 0
+      m_HorizontalBearingY: 0
+      m_HorizontalAdvance: 0
     m_GlyphRect:
-      m_X: 896
-      m_Y: 760
-      m_Width: 69
-      m_Height: 68
+      m_X: 0
+      m_Y: 0
+      m_Width: 0
+      m_Height: 0
     m_Scale: 1
     m_AtlasIndex: 0
   m_CharacterTable:
@@ -1904,12 +1918,16 @@ MonoBehaviour:
     m_GlyphIndex: 98
     m_Scale: 1
   - m_ElementType: 1
+    m_Unicode: 215
+    m_GlyphIndex: 153
+    m_Scale: 1
+  - m_ElementType: 1
     m_Unicode: 8230
     m_GlyphIndex: 240
     m_Scale: 1
   - m_ElementType: 1
-    m_Unicode: 215
-    m_GlyphIndex: 153
+    m_Unicode: 13
+    m_GlyphIndex: 2
     m_Scale: 1
   m_AtlasTextures:
   - {fileID: 7945921798397151010}
